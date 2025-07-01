@@ -53,7 +53,6 @@ fn configure_protected_routes(cfg: &mut web::ServiceConfig) {
             .route("/docs/likes", web::get().to(get_likes)),
     );
 }
-
 /// Configure fallback route for unmatched requests
 fn configure_fallback(cfg: &mut web::ServiceConfig) {
     cfg.default_service(web::route().to(|| async {

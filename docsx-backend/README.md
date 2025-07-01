@@ -60,8 +60,8 @@ See `.env.example` for all required variables (database URL, Clerk issuer, etc).
 
 ```bash
 # Clone the repository (if not already done)
-git clone https://github.com/yourusername/docsx.git
-cd docsx/docsx-backend
+git clone https://github.com/Amitminer/DocsX
+cd DocsX/docsx-backend
 
 # Copy environment file
 cp env.example .env
@@ -79,8 +79,8 @@ Your API will be available at: http://localhost:8080
 
 ```bash
 # Build and run with Docker
-docker build -t docsx-backend .
-docker run -p 8080:8080 --env-file .env docsx-backend
+docker build -t backend .
+docker run -p 8080:8080 --env-file .env backend
 ```
 
 ## 🔧 Environment Configuration

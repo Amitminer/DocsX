@@ -61,8 +61,8 @@ See `.env.example` for all required variables (API base URL, Clerk keys, Google 
 
 ```bash
 # Clone the repository (if not already done)
-git clone https://github.com/yourusername/docsx.git
-cd docsx/docsx-frontend
+git clone https://github.com/Amitminer/DocsX
+cd DocsX/docsx-frontend
 
 # Install dependencies
 pnpm install
