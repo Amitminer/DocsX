@@ -1,0 +1,25 @@
+# Rust
+*.target
+/target/
+*/target/** */
+**/debug/
+**/target/
+**/*.rs.bk
+Cargo.lock
+
+# Next.js
+.next/
+out/
+node_modules/
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker
+*.env
+docker-compose.override.yml
+.docker/
+Dockerfile*
+docker-compose*.yml
+.aider*

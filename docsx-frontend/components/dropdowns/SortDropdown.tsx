@@ -1,0 +1,151 @@
+import { Clock, TrendingUp, ChevronDown, Sparkles, Bookmark } from "lucide-react"
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
+import { useState } from "react"
+
+interface SortDropdownProps {
+  sortBy: "created_at" | "likes" | "bookmarked"
+  onSortChange: (sort: "created_at" | "likes" | "bookmarked") => void
+}
+
+export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const getSortConfig = (type: string) => {
+    switch (type) {
+      case "created_at":
+        return {
+          icon: Clock,
+          label: "Latest",
+          color: "from-violet-500 to-purple-600",
+          bgColor: "from-violet-500/20 to-purple-600/20",
+          borderColor: "border-violet-500/30",
+          glowColor: "shadow-violet-500/25"
+        }
+      case "likes":
+        return {
+          icon: TrendingUp,
+          label: "Most Liked",
+          color: "from-cyan-500 to-blue-600",
+          bgColor: "from-cyan-500/20 to-blue-600/20",
+          borderColor: "border-cyan-500/30",
+          glowColor: "shadow-cyan-500/25"
+        }
+      case "bookmarked":
+        return {
+          icon: Bookmark,
+          label: "Bookmarked",
+          color: "from-amber-500 to-orange-600",
+          bgColor: "from-amber-500/20 to-orange-600/20",
+          borderColor: "border-amber-500/30",
+          glowColor: "shadow-amber-500/25"
+        }
+      default:
+        return {
+          icon: Clock,
+          label: "Latest",
+          color: "from-violet-500 to-purple-600",
+          bgColor: "from-violet-500/20 to-purple-600/20",
+          borderColor: "border-violet-500/30",
+          glowColor: "shadow-violet-500/25"
+        }
+    }
+  }
+
+  const currentConfig = getSortConfig(sortBy)
+  const IconComponent = currentConfig.icon
+
+  return (
+    <Menu as="div" className="relative inline-block text-left">
+      {({ open }) => (
+        <>
+          <MenuButton
+            onClick={() => setIsOpen(!isOpen)}
+            className={`group relative flex items-center gap-3 px-6 py-3 rounded-full font-semibold text-white transition-all duration-700 ease-out transform hover:scale-105 active:scale-95 ${
+              open ? 'scale-105' : 'scale-100'
+            } flex-1 min-w-0 px-2 py-2 text-sm h-11`}
+          >
+            <div className={`absolute inset-0 bg-gradient-to-r ${currentConfig.bgColor} rounded-full transition-all duration-700 ${open ? 'opacity-100 blur-0' : 'opacity-80 blur-sm'}`} />
+            <div className={`absolute inset-0 bg-gradient-to-r ${currentConfig.color} rounded-full opacity-0 transition-all duration-700 ${open ? 'opacity-100 scale-105' : 'group-hover:opacity-50 scale-100'}`} />
+            
+            <div className="relative flex items-center gap-3">
+              <div className={`relative p-2 rounded-full bg-gradient-to-r ${currentConfig.color} transition-all duration-700 ease-out ${open ? 'rotate-12 scale-110 shadow-lg' : 'rotate-0 scale-100'}`}>
+                <IconComponent className="w-4 h-4 text-white" />
+                {open && (
+                  <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
+                )}
+              </div>
+              
+              <span className="font-bold text-base tracking-wide">
+                {currentConfig.label}
+              </span>
+              
+              <ChevronDown 
+                className={`w-4 h-4 transition-all duration-700 ease-out ${open ? 'rotate-180 text-white' : 'rotate-0 text-gray-300'}`} 
+              />
+            </div>
+          </MenuButton>
+
+          <MenuItems className="absolute right-0 mt-3 w-60 origin-top-right rounded-3xl bg-gradient-to-br from-gray-900/95 via-slate-900/95 to-gray-900/95 backdrop-blur-xl border border-gray-700/50 shadow-2xl focus:outline-none z-50 overflow-hidden min-w-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 rounded-3xl" />
+            
+            <div className="relative p-2">
+              {[
+                { type: "created_at", icon: Clock, label: "Latest", desc: "Recently created docs" },
+                { type: "likes", icon: TrendingUp, label: "Most Liked", desc: "Popular in community" },
+                { type: "bookmarked", icon: Bookmark, label: "Bookmarked", desc: "Your saved favorites" }
+              ].map((option, index) => {
+                const config = getSortConfig(option.type)
+                const OptionIcon = option.icon
+                const isActive = sortBy === option.type
+                
+                return (
+                  <MenuItem key={option.type}>
+                    <button
+                      onClick={() => onSortChange(option.type as "created_at" | "likes" | "bookmarked")}
+                      className={`group relative w-full flex items-center gap-3 p-3 rounded-2xl transition-all duration-500 ease-out transform ${
+                        isActive 
+                          ? `bg-gradient-to-r ${config.bgColor} border ${config.borderColor} shadow-lg ${config.glowColor} scale-105` 
+                          : 'hover:bg-white/10 hover:border hover:border-white/20 hover:scale-102'
+                      }`}
+                      style={{
+                        animationDelay: `${index * 100}ms`,
+                        transform: `translateY(${index * 2}px)`
+                      }}
+                    >
+                      <div className={`relative p-1.5 rounded-full transition-all duration-500 ease-out ${
+                        isActive 
+                          ? `bg-gradient-to-r ${config.color} shadow-lg` 
+                          : 'bg-white/10 group-hover:bg-white/20'
+                      }`}>
+                        <OptionIcon className={`w-3.5 h-3.5 transition-colors duration-500 ${
+                          isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'
+                        }`} />
+                      </div>
+                      
+                      <div className="flex-1 text-left">
+                        <div className={`font-semibold text-sm transition-colors duration-500 ${
+                          isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'
+                        }`}>
+                          {option.label}
+                        </div>
+                        <div className={`text-xs transition-colors duration-500 ${
+                          isActive ? 'text-white/70' : 'text-gray-500 group-hover:text-gray-400'
+                        }`}>
+                          {option.desc}
+                        </div>
+                      </div>
+                      
+                      {isActive && (
+                        <div className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${config.color} animate-pulse shadow-lg`} />
+                      )}
+                    </button>
+                  </MenuItem>
+                )
+              })}
+            </div>
+          </MenuItems>
+        </>
+      )}
+    </Menu>
+  )
+} 
