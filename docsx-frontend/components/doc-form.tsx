@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import AssetCard from "./doc-view/asset-card"
 import { useDocAssets } from "@/hooks/useDocAssets"
 import { AnimatePresence, motion } from "framer-motion"
+import { config } from "@/lib/config"
 
 
 interface DocFormProps {
@@ -98,7 +99,7 @@ export default function DocForm({
 			acceptedFiles.forEach(file => {
 				formData.append("files", file)
 			})
-			const uploadUrl = `http://localhost:8080/api/docs/${initialData.id}/assets`;
+			const uploadUrl = `${config.apiBaseUrl}/docs/${initialData.id}/assets`;
 			const response = await fetch(uploadUrl, {
 				method: "POST",
 				headers: {
