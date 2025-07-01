@@ -5,7 +5,6 @@
 **/debug/
 **/target/
 **/*.rs.bk
-Cargo.lock
 
 # Next.js
 .next/

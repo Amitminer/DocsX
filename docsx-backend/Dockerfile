@@ -1,5 +1,5 @@
 # -------- STAGE 1: Prepare dependencies with cargo-chef --------
-FROM rust:1.77-slim AS chef
+FROM rust:1.81-slim AS chef
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y pkg-config libssl-dev curl ca-certificates && apt-get clean
@@ -12,7 +12,7 @@ COPY src ./src
 RUN cargo chef prepare --recipe-path recipe.json
 
 # -------- STAGE 2: Build dependencies --------
-FROM rust:1.77-slim AS builder
+FROM rust:1.81-slim AS builder
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y pkg-config libssl-dev curl ca-certificates && apt-get clean
