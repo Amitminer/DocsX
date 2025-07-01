@@ -35,6 +35,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
 
 /// Configure public routes that don't require authentication
 fn configure_public_routes(cfg: &mut web::ServiceConfig) {
+    cfg.route("/health", web::get().to(check_health));
     cfg.route("/docs", web::get().to(get_docs))
         .route("/docs/view", web::post().to(increment_views));
 }
@@ -60,6 +61,14 @@ fn configure_fallback(cfg: &mut web::ServiceConfig) {
             "error": "Not Found"
         }))
     }));
+}
+
+/// Health Checker Endpoint
+async fn check_health() -> HttpResponse {
+    HttpResponse::Ok().json(json!({
+        "status": "ok",
+        "message": "DocsX backend is healthy"
+    }))
 }
 
 // ============================================================================
