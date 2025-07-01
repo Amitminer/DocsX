@@ -79,11 +79,19 @@ pub async fn init_db(pool: &DbPool) -> Result<(), AppError> {
             description TEXT NOT NULL,
             content TEXT NOT NULL,
             author_id TEXT NOT NULL,
+            author_name TEXT NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
             likes INTEGER DEFAULT 0,
             views INTEGER DEFAULT 0
         )
         "#,
+            &[],
+        )
+        .await?;
+
+    client
+        .execute(
+            "ALTER TABLE docs ADD COLUMN IF NOT EXISTS author_name TEXT NOT NULL DEFAULT ''",
             &[],
         )
         .await?;
