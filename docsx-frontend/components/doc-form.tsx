@@ -147,6 +147,9 @@ export default function DocForm({
 			"application/pdf": [],
 			"application/postscript": [".xd"],
 			"application/zip": [".zip"],
+			"video/mp4": [".mp4"],
+			"video/webm": [".webm"],
+			"video/ogg": [".ogv", ".ogg"],
 		}
 	})
 
