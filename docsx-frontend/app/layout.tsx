@@ -10,9 +10,9 @@ import { Toaster } from 'sonner'
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "DocsHub - Documentation Blog",
-  description: "A modern documentation blog platform",
-    generator: 'Next.js',
+  title: "DocsX - Blazing-fast AI-powered documentation platform",
+  description: "DocsX is a documentation and tutorial platform to help you create, share, and discover tutorials and docs—powered by AI and a modern tech stack.",
+  keywords: "DocsX, documentation, tutorials, markdown, AI, Next.js, Rust, Actix, Clerk, search, blogging, tech docs, knowledge base, instant search, Google AI, open source",
 }
 
 export default function RootLayout({
