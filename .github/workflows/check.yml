@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: encryptx-backend
+        working-directory: docsx-backend
 
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: encryptx-frontend
+        working-directory: docsx-frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +41,7 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: Run ESLint
-        run: npm run lint
+        run: pnpm run lint

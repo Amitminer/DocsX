@@ -1,0 +1,58 @@
+services:
+  db:
+    image: postgres:16
+    container_name: docsx_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_USER}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./docsx-backend
+      dockerfile: Dockerfile
+    environment:
+      RUST_LOG: ${RUST_LOG}
+      DATABASE_URL: ${DATABASE_URL}
+      API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      CLERK_API_KEY: ${CLERK_API_KEY}
+      CLERK_ISSUER: ${CLERK_ISSUER}
+      ALLOWED_ORIGIN: ${ALLOWED_ORIGIN}
+    volumes:
+      - cargo-registry:/usr/local/cargo/registry
+      - cargo-git:/usr/local/cargo/git
+      - cargo-target:/app/target
+      - backend-data:/app/storage
+    depends_on:
+      - db
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./docsx-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      CLERK_API_KEY: ${CLERK_API_KEY}
+      GOOGLE_GENERATIVE_AI_API_KEY: ${GOOGLE_GENERATIVE_AI_API_KEY}
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pg_data:
+  backend-data:
+  cargo-registry:
+  cargo-git:
+  cargo-target:
