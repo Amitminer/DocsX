@@ -87,7 +87,7 @@ impl DocsQuery {
     }
 
     pub fn limit(&self) -> u32 {
-        self.limit.unwrap_or(10).min(100).max(1)
+        self.limit.unwrap_or(10).clamp(1, 100)
     }
 
     pub fn offset(&self) -> u32 {

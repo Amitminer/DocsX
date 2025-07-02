@@ -1,33 +1,33 @@
+use actix_multipart::MultipartError;
 use actix_web::{HttpResponse, ResponseError};
 use serde_json::json;
 use thiserror::Error;
 use validator::ValidationErrors;
-use actix_multipart::MultipartError;
 
 #[derive(Error, Debug)]
 pub enum AppError {
     #[error("Database error: {0}")]
     Database(#[from] tokio_postgres::Error),
-    
+
     #[error("Pool error: {0}")]
     Pool(#[from] deadpool_postgres::PoolError),
-    
+
     #[error("Not found")]
     NotFound,
-    
+
     #[allow(dead_code)]
     #[error("Unauthorized")]
     Unauthorized,
-    
+
     #[error("Forbidden")]
     Forbidden,
-    
+
     #[error("Validation error: {0}")]
     Validation(String),
-    
+
     #[error("Internal server error")]
     Internal,
-    
+
     #[error("UUID parse error: {0}")]
     UuidParse(#[from] uuid::Error),
 

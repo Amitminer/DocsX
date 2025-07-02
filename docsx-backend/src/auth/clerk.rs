@@ -1,9 +1,10 @@
 use crate::utils::error::{AppError, AppResult};
-use jsonwebtoken::{Algorithm, DecodingKey, Validation, decode};
+use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use reqwest;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::env;
+use tokio::sync::Mutex as TokioMutex;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ClerkClaims {
@@ -24,15 +25,17 @@ pub struct UserInfo {
 }
 
 pub struct ClerkAuth {
-    jwks_cache: Option<HashMap<String, DecodingKey>>,
+    jwks_cache: TokioMutex<HashMap<String, DecodingKey>>,
 }
 
 impl ClerkAuth {
     pub fn new() -> Self {
-        Self { jwks_cache: None }
+        Self {
+            jwks_cache: TokioMutex::new(HashMap::new()),
+        }
     }
 
-    pub async fn verify_token(&mut self, token: &str) -> AppResult<UserInfo> {
+    pub async fn verify_token(&self, token: &str) -> AppResult<UserInfo> {
         // Remove "Bearer " prefix if present
         let token = token.strip_prefix("Bearer ").unwrap_or(token);
 
@@ -94,11 +97,12 @@ impl ClerkAuth {
         })
     }
 
-    async fn get_decoding_key(&mut self, kid: &str) -> AppResult<DecodingKey> {
+    async fn get_decoding_key(&self, kid: &str) -> AppResult<DecodingKey> {
         log::debug!("Getting decoding key for kid: {}", kid);
 
         // Check cache first
-        if let Some(ref cache) = self.jwks_cache {
+        {
+            let cache = self.jwks_cache.lock().await;
             if let Some(key) = cache.get(kid) {
                 log::debug!("Found cached key for kid: {}", kid);
                 return Ok(key.clone());
@@ -137,11 +141,8 @@ impl ClerkAuth {
         })?;
 
         // Cache the key
-        if self.jwks_cache.is_none() {
-            self.jwks_cache = Some(HashMap::new());
-        }
-
-        if let Some(ref mut cache) = self.jwks_cache {
+        {
+            let mut cache = self.jwks_cache.lock().await;
             cache.insert(kid.to_string(), decoding_key.clone());
         }
 
@@ -156,11 +157,11 @@ impl ClerkAuth {
 
 #[derive(Debug, Deserialize)]
 struct JWKSResponse {
-    keys: Vec<JWK>,
+    keys: Vec<Jwk>,
 }
 
 #[derive(Debug, Deserialize)]
-struct JWK {
+struct Jwk {
     kid: String,
     n: String,
     e: String,

@@ -28,15 +28,6 @@ cargo run --release
 
 See `.env.example` for all required variables (database URL, Clerk issuer, etc).
 
-## Project Structure
-
-- `src/api/` – API route handlers
-- `src/auth/` – Auth middleware
-- `src/db/` – Database logic
-- `src/handlers/` – Business logic
-- `src/models/` – Data models
-- `src/utils/` – Utilities
-
 ## 🎯 Features
 
 - **🚀 Blazing Fast**: Built with Rust and Actix Web for maximum performance
@@ -114,32 +105,6 @@ CREATE DATABASE docsx;
 -- Create user (optional)
 CREATE USER docsx_user WITH PASSWORD 'your_password';
 GRANT ALL PRIVILEGES ON DATABASE docsx TO docsx_user;
-```
-
-## 📁 Project Structure
-
-```
-docsx-backend/
-├── src/
-│   ├── api/               # API route handlers
-│   │   └── docs.rs        # Document endpoints
-│   ├── auth/              # Authentication middleware
-│   │   ├── clerk.rs       # Clerk integration
-│   │   └── middleware.rs  # JWT middleware
-│   ├── db/                # Database operations
-│   │   ├── mod.rs         # Database module
-│   │   └── postgres.rs    # PostgreSQL connection
-│   ├── handlers/          # Business logic
-│   │   └── doc_handler.rs # Document operations
-│   ├── models/            # Data models
-│   │   ├── mod.rs         # Models module
-│   │   └── doc.rs         # Document model
-│   ├── utils/             # Utility functions
-│   │   ├── mod.rs         # Utils module
-│   │   └── error.rs       # Error handling
-│   └── main.rs            # Application entry point
-├── Cargo.toml             # Rust dependencies
-└── Dockerfile             # Docker configuration
 ```
 
 ## 📁 Backend Source Structure
@@ -245,43 +210,6 @@ curl -X POST "http://localhost:8080/api/docs/unlike?id=DOCUMENT_UUID" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
-## 🗄️ Database Schema
-
-### Documents Table
-
-```sql
-CREATE TABLE documents (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    title VARCHAR(200) NOT NULL,
-    description VARCHAR(500) NOT NULL,
-    content TEXT NOT NULL,
-    author_id VARCHAR(255) NOT NULL,
-    author_name VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    likes INTEGER DEFAULT 0
-);
-
-CREATE INDEX idx_documents_author_id ON documents(author_id);
-CREATE INDEX idx_documents_created_at ON documents(created_at);
-CREATE INDEX idx_documents_likes ON documents(likes);
-```
-
-### Likes Table
-
-```sql
-CREATE TABLE document_likes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    document_id UUID NOT NULL REFERENCES documents(id) ON DELETE CASCADE,
-    user_id VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(document_id, user_id)
-);
-
-CREATE INDEX idx_document_likes_document_id ON document_likes(document_id);
-CREATE INDEX idx_document_likes_user_id ON document_likes(user_id);
-```
-
 ## 🔒 Security Features
 
 ### Authentication
@@ -358,32 +286,6 @@ export RUST_LOG=debug
 RUST_LOG=info cargo run
 ```
 
-### Database Migrations
-
-```bash
-# Run database initialization
-cargo run --bin init-db
-
-# Check database connection
-cargo run --bin check-db
-```
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-cargo test
-
-# Run specific test
-cargo test test_create_document
-
-# Run tests with output
-cargo test -- --nocapture
-
-# Run integration tests
-cargo test --test integration_tests
-```
-
 ## 📊 Monitoring
 
 ### Health Check
@@ -392,8 +294,6 @@ cargo test --test integration_tests
 # Check API health
 curl http://localhost:8080/api/health
 
-# Check database connection
-curl http://localhost:8080/api/health/db
 ```
 
 ### Metrics

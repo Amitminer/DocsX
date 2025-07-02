@@ -11,4 +11,4 @@ pub struct DocAsset {
     pub mime_type: String,
     pub size: i32,
     pub created_at: DateTime<Utc>,
-} 
+}

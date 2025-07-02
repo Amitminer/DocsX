@@ -646,15 +646,7 @@ enum SmartFilter {
 }
 
 /// Build update query for document updates
-fn build_update_query(
-    req: &UpdateDocRequest,
-    id: Uuid,
-) -> AppResult<
-    Option<(
-        String,
-        Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>>,
-    )>,
-> {
+fn build_update_query(req: &UpdateDocRequest, id: Uuid) -> AppResult<MaybeSqlParams> {
     let mut updates = Vec::new();
     let mut params: Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>> = Vec::new();
 
@@ -797,3 +789,9 @@ fn row_to_doc(row: Row) -> Doc {
         liked_by_current_user: false, // Set by caller if needed
     }
 }
+
+type SqlParams = (
+    String,
+    Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>>,
+);
+type MaybeSqlParams = Option<SqlParams>;

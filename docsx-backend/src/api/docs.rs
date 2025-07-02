@@ -1,9 +1,9 @@
-use crate::auth::middleware::{AuthMiddleware, extract_user_from_request};
+use crate::auth::middleware::{extract_user_from_request, AuthMiddleware};
 use crate::db::postgres::DbPool;
 use crate::handlers::doc_handler::DocHandler;
 use crate::models::doc::{CreateDocRequest, DocsQuery, UpdateDocRequest};
 use crate::utils::error::{AppError, AppResult};
-use actix_web::{HttpRequest, HttpResponse, Result, web};
+use actix_web::{web, HttpRequest, HttpResponse, Result};
 use md5;
 use serde::Deserialize;
 use serde_json::json;
@@ -130,7 +130,7 @@ async fn increment_views(
         .unwrap_or("unknown")
         .to_string();
 
-    // Simple hash of IP for rate limiting 
+    // Simple hash of IP for rate limiting
     let ip_hash = format!("{:x}", md5::compute(ip.as_bytes()));
 
     let new_views = DocHandler::increment_views(&pool, doc_id, &ip_hash).await?;

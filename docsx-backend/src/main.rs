@@ -6,7 +6,7 @@ mod models;
 mod utils;
 
 use actix_cors::Cors;
-use actix_web::{App, HttpServer, middleware::Logger, web};
+use actix_web::{middleware::Logger, web, App, HttpServer};
 use db::postgres::{create_pool_with_retry, init_db};
 use dotenvy::dotenv;
 use std::env;
@@ -60,7 +60,7 @@ async fn main() -> std::io::Result<()> {
             .service(
                 web::scope("/api")
                     .configure(api::assets::protected_asset_config)
-                    .configure(api::docs::config)
+                    .configure(api::docs::config),
             )
     })
     .bind(("0.0.0.0", port_num))?

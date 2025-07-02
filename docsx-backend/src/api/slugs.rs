@@ -1,10 +1,10 @@
-use actix_web::{web, HttpRequest, HttpResponse, Result};
-use serde::{Deserialize, Serialize};
-use uuid::Uuid;
+use crate::auth::middleware::{extract_user_from_request, AuthMiddleware};
 use crate::db::postgres::DbPool;
 use crate::utils::error::AppError;
-use crate::auth::middleware::{AuthMiddleware, extract_user_from_request};
+use actix_web::{web, HttpRequest, HttpResponse, Result};
 use chrono::Utc;
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 pub struct SetSlugRequest {
@@ -24,7 +24,10 @@ pub fn config(cfg: &mut web::ServiceConfig) {
             .route("", web::get().to(get_all_slugs))
             .route("", web::post().to(set_slug).wrap(AuthMiddleware::new()))
             .route("/{slug}", web::get().to(get_slug))
-            .route("/{slug}", web::delete().to(delete_slug).wrap(AuthMiddleware::new())),
+            .route(
+                "/{slug}",
+                web::delete().to(delete_slug).wrap(AuthMiddleware::new()),
+            ),
     );
 }
 
@@ -62,7 +65,9 @@ pub async fn set_slug(
     if let Some(row) = existing {
         let existing_doc_id: Uuid = row.get("doc_id");
         if existing_doc_id != doc_id {
-            return Err(AppError::Validation("Slug is already used by another document".to_string()));
+            return Err(AppError::Validation(
+                "Slug is already used by another document".to_string(),
+            ));
         }
     }
     // Upsert slug
@@ -130,17 +135,22 @@ pub async fn delete_slug(
 pub async fn get_all_slugs(pool: web::Data<DbPool>) -> Result<HttpResponse, AppError> {
     println!("get_all_slugs called!");
     let client = pool.get().await?;
-    let rows = client.query("SELECT doc_id, slug FROM doc_slugs", &[]).await?;
-    let slugs: Vec<_> = rows.iter().map(|row| {
-        serde_json::json!({
-            "doc_id": row.get::<_, Uuid>("doc_id").to_string(),
-            "slug": row.get::<_, String>("slug"),
+    let rows = client
+        .query("SELECT doc_id, slug FROM doc_slugs", &[])
+        .await?;
+    let slugs: Vec<_> = rows
+        .iter()
+        .map(|row| {
+            serde_json::json!({
+                "doc_id": row.get::<_, Uuid>("doc_id").to_string(),
+                "slug": row.get::<_, String>("slug"),
+            })
         })
-    }).collect();
+        .collect();
     Ok(HttpResponse::Ok().json(slugs))
 }
 
 fn is_valid_slug(slug: &str) -> bool {
     let re = regex::Regex::new(r"^[a-z0-9][a-z0-9-_]{2,62}$").unwrap();
     re.is_match(slug)
-} 
+}

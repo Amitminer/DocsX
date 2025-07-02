@@ -2,22 +2,23 @@ use crate::utils::error::AppError;
 
 use super::clerk::{ClerkAuth, UserInfo};
 use actix_web::{
+    dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
     Error, HttpMessage, HttpRequest,
-    dev::{Service, ServiceRequest, ServiceResponse, Transform, forward_ready},
 };
 use futures_util::future::LocalBoxFuture;
-use std::future::{Ready, ready};
+use std::future::{ready, Ready};
 use std::rc::Rc;
-use std::sync::{Arc, Mutex};
+use std::sync::Arc;
+use tokio::sync::Mutex as TokioMutex;
 
 pub struct AuthMiddleware {
-    clerk_auth: Arc<Mutex<ClerkAuth>>,
+    clerk_auth: Arc<TokioMutex<ClerkAuth>>,
 }
 
 impl AuthMiddleware {
     pub fn new() -> Self {
         Self {
-            clerk_auth: Arc::new(Mutex::new(ClerkAuth::new())),
+            clerk_auth: Arc::new(TokioMutex::new(ClerkAuth::new())),
         }
     }
 }
@@ -44,7 +45,7 @@ where
 
 pub struct AuthMiddlewareService<S> {
     service: Rc<S>,
-    clerk_auth: Arc<Mutex<ClerkAuth>>,
+    clerk_auth: Arc<TokioMutex<ClerkAuth>>,
 }
 
 impl<S, B> Service<ServiceRequest> for AuthMiddlewareService<S>
@@ -71,8 +72,10 @@ where
 
         let fut = async move {
             if let Some(token) = auth_header {
-                let mut auth = clerk_auth.lock().unwrap();
-                match auth.verify_token(&token).await {
+                let token = token.clone();
+                let auth = clerk_auth.lock().await;
+                let verify_result = auth.verify_token(&token).await;
+                match verify_result {
                     Ok(user_info) => {
                         req.extensions_mut().insert(user_info);
                         let res = service.call(req).await?;
