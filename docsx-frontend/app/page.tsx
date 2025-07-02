@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import RecentsDropdown from "@/components/dropdowns/RecentsDropdown"
 import { SmartSearch } from "@/components/ai/smart-search"
-import Image from "next/image"
 
 export default function HomePage() {
 	const pfpCache = useRef<Record<string, string | undefined>>({})
@@ -50,7 +49,7 @@ export default function HomePage() {
 
 	// Footer constants
 	const currentYear = new Date().getFullYear()
-	const CurrentGithubLink = "https://github.com/AmitxD/DocsX"
+	const CurrentGithubLink = "https://github.com/Amitminer/DocsX"
 
 	useEffect(() => {
 		if (docs.length === 0) return;
@@ -350,12 +349,14 @@ export default function HomePage() {
 						</div>
 
 						<div className="flex items-center space-x-4">
-							<a href={CurrentGithubLink}
+							<a
+								href={CurrentGithubLink}
 								target="_blank"
 								rel="noopener noreferrer"
 								className="flex items-center space-x-2 text-sm text-gray-400 hover:text-[#00FFFF] transition-colors duration-300"
+								/* eslint-disable @next/next/no-img-element */
 							>
-								<Image src="/github.svg" alt="GitHub" className="w-4 h-4" />
+								<img src="/github.svg" alt="GitHub" width={16} height={16} className="w-4 h-4" />
 								<span>Open Source</span>
 								<span className="text-gray-600">•</span>
 								<span className="text-sm text-gray-400">© {currentYear}</span>

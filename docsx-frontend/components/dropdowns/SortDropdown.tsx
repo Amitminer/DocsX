@@ -85,10 +85,9 @@ export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps
             </div>
           </MenuButton>
 
-          <MenuItems className="absolute right-0 mt-3 w-60 origin-top-right rounded-3xl bg-gradient-to-br from-gray-900/95 via-slate-900/95 to-gray-900/95 backdrop-blur-xl border border-gray-700/50 shadow-2xl focus:outline-none z-50 overflow-hidden min-w-0">
+          <MenuItems className="absolute right-0 mt-3 w-full max-w-[95vw] sm:w-60 origin-top-right rounded-3xl bg-gradient-to-br from-gray-900/95 via-slate-900/95 to-gray-900/95 backdrop-blur-xl border border-gray-700/50 shadow-2xl focus:outline-none z-50 overflow-hidden min-w-0 text-xs sm:text-sm max-h-[60vh] overflow-y-auto p-1 sm:p-2">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 rounded-3xl" />
-            
-            <div className="relative p-2">
+            <div className="relative p-1 sm:p-2">
               {[
                 { type: "created_at", icon: Clock, label: "Latest", desc: "Recently created docs" },
                 { type: "likes", icon: TrendingUp, label: "Most Liked", desc: "Popular in community" },
@@ -102,7 +101,7 @@ export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps
                   <MenuItem key={option.type}>
                     <button
                       onClick={() => onSortChange(option.type as "created_at" | "likes" | "bookmarked")}
-                      className={`group relative w-full flex items-center gap-3 p-3 rounded-2xl transition-all duration-500 ease-out transform ${
+                      className={`group relative w-full flex items-center gap-3 p-2 sm:p-3 rounded-2xl transition-all duration-500 ease-out transform text-xs sm:text-sm min-h-[40px] hover:bg-white/10 active:bg-white/20 ${
                         isActive 
                           ? `bg-gradient-to-r ${config.bgColor} border ${config.borderColor} shadow-lg ${config.glowColor} scale-105` 
                           : 'hover:bg-white/10 hover:border hover:border-white/20 hover:scale-102'
@@ -123,7 +122,7 @@ export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps
                       </div>
                       
                       <div className="flex-1 text-left">
-                        <div className={`font-semibold text-sm transition-colors duration-500 ${
+                        <div className={`font-semibold text-xs sm:text-sm transition-colors duration-500 ${
                           isActive ? 'text-white' : 'text-gray-300 group-hover:text-white'
                         }`}>
                           {option.label}

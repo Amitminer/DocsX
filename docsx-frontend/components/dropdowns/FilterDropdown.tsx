@@ -32,15 +32,15 @@ export default function FilterDropdown({ onApply }: { onApply: (params: { author
 				<ChevronDown className={`w-4 h-4 transition-transform ${show ? "rotate-180" : "rotate-0"}`} />
 			</button>
 			{show && (
-				<div className="absolute z-50 top-full left-0 mt-2 w-80 max-w-[95vw] bg-gradient-to-br from-gray-900/95 to-gray-800/95 border border-purple-500/30 rounded-2xl shadow-2xl p-6 flex flex-col gap-4">
-					<div className="flex flex-col gap-2">
+				<div className="absolute z-50 top-full left-0 mt-2 w-full max-w-[95vw] sm:w-80 bg-gradient-to-br from-gray-900/95 to-gray-800/95 border border-purple-500/30 rounded-2xl shadow-2xl p-1 sm:p-4 flex flex-col gap-2 sm:gap-4 text-xs sm:text-sm max-h-[60vh] overflow-y-auto">
+					<div className="flex flex-col gap-1 sm:gap-2">
 						<label className="text-xs font-semibold text-purple-300 flex items-center gap-2"><Tag className="w-4 h-4" />Tags</label>
-						<div className="flex flex-wrap gap-2">
+						<div className="flex flex-wrap gap-1 sm:gap-2">
 							{TAG_SUGGESTIONS.map(tag => (
 								<button
 									key={tag}
 									onClick={() => setFilterTags(tags => tags.includes(tag) ? tags.filter(t => t !== tag) : [...tags, tag])}
-									className={`px-3 py-1 rounded-full border text-xs font-medium transition-all duration-200 ${filterTags.includes(tag) ? "bg-purple-500/30 border-purple-400 text-purple-200" : "bg-gray-800/60 border-gray-600 text-gray-300 hover:bg-purple-500/10"}`}
+									className={`px-2 sm:px-3 py-1 rounded-full border text-xs font-medium transition-all duration-200 min-h-[36px] hover:bg-purple-500/10 active:bg-purple-500/20 ${filterTags.includes(tag) ? "bg-purple-500/30 border-purple-400 text-purple-200" : "bg-gray-800/60 border-gray-600 text-gray-300"}`}
 								>
 									{tag}
 								</button>

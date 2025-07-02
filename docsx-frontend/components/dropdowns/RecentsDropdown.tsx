@@ -48,9 +48,9 @@ export default function RecentsDropdown() {
             </div>
           </MenuButton>
 
-          <MenuItems className="absolute left-0 mt-3 origin-top rounded-3xl bg-gradient-to-br from-gray-900/95 via-slate-900/95 to-gray-900/95 backdrop-blur-xl border border-gray-700/50 shadow-2xl focus:outline-none z-50 overflow-hidden w-full min-w-0">
+          <MenuItems className="absolute left-0 mt-3 origin-top rounded-3xl bg-gradient-to-br from-gray-900/95 via-slate-900/95 to-gray-900/95 backdrop-blur-xl border border-gray-700/50 shadow-2xl focus:outline-none z-50 overflow-hidden w-full max-w-[95vw] sm:w-72 min-w-0 text-xs sm:text-sm max-h-[60vh] overflow-y-auto p-1 sm:p-2">
             <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-white/5 rounded-3xl" />
-            <div className="relative p-2">
+            <div className="relative p-1 sm:p-2">
               <div className="flex items-center justify-between mb-1">
                 <span className="flex items-center gap-1 text-xs text-gray-400">
                   <Clock className="w-3.5 h-3.5 text-cyan-400" />
@@ -70,7 +70,7 @@ export default function RecentsDropdown() {
                 <MenuItem key={doc.id}>
                   <a
                     href={`/docs/${doc.slug}`}
-                    className={`group relative w-full flex items-center gap-3 p-3 rounded-2xl transition-all duration-500 ease-out transform hover:bg-white/10 hover:border hover:border-white/20 hover:scale-102`}
+                    className="group relative w-full flex items-center gap-3 p-2 sm:p-3 rounded-2xl transition-all duration-500 ease-out transform text-xs sm:text-sm min-h-[40px] hover:bg-white/10 active:bg-white/20"
                     style={{
                       animationDelay: `${index * 100}ms`,
                       transform: `translateY(${index * 2}px)`
@@ -80,7 +80,7 @@ export default function RecentsDropdown() {
                       <Clock className="w-3.5 h-3.5 text-white" />
                     </div>
                     <div className="flex-1 text-left">
-                      <div className="font-semibold text-sm text-white truncate">
+                      <div className="font-medium text-xs text-white truncate max-w-[100px]">
                         {doc.title}
                       </div>
                     </div>

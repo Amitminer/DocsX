@@ -25,14 +25,6 @@ pnpm run dev
 
 See `.env.example` for all required variables (API base URL, Clerk keys, Google AI key, etc).
 
-## Project Structure
-
-- `app/` – Pages and API routes
-- `components/` – UI and logic components
-- `hooks/` – Custom React hooks
-- `lib/` – Config and utilities
-- `public/` – Static assets
-
 ## Customization
 
 - Theme: Edit `tailwind.config.ts` and `app/globals.css`
@@ -205,29 +197,6 @@ pnpm run type-check   # Check TypeScript types
 - **Code Splitting**: Automatic route-based code splitting
 - **Caching**: Intelligent caching strategies
 - **Bundle Analysis**: Optimized bundle sizes
-
-## 🧪 Testing
-
-```bash
-# Run tests (when implemented)
-pnpm run test
-
-# Run tests in watch mode
-pnpm run test:watch
-
-# Run tests with coverage
-pnpm run test:coverage
-```
-
-### Debug Mode
-
-```bash
-# Enable debug logging
-DEBUG=* pnpm run dev
-
-# Check environment variables
-pnpm run env:check
-```
 
 ## 🤝 Contributing
 

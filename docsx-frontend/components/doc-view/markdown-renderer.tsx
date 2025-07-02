@@ -2,6 +2,7 @@
 
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import rehypeRaw from "rehype-raw"
 import { Copy, Archive, FileText, Download } from "lucide-react"
 import { config } from "@/lib/config"
 
@@ -21,6 +22,7 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 		<div className="prose prose-invert prose-purple max-w-none prose-lg">
 			<ReactMarkdown
 				remarkPlugins={[remarkGfm]}
+				rehypePlugins={[rehypeRaw]}
 				components={{
 					code(props) {
 						const { children, className, ...rest } = props
@@ -207,16 +209,26 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 						let finalSrc = (typeof src === 'string' ? src : '') || "/placeholder.svg";
 						if (docId) {
 							if (finalSrc.startsWith('/docs/')) {
-								// Convert /docs/{docId}/{filename} to /assets/{docId}/{filename}
 								const parts = finalSrc.split("/");
 								const filename = parts.slice(3).join("/");
 								finalSrc = `${config.apiBaseUrl.replace(/\/api$/, "")}/assets/${docId}/${filename}`;
 							} else if (!finalSrc.startsWith('http') && !finalSrc.startsWith('/assets/')) {
-								// Bare filename or other relative, treat as asset
 								finalSrc = `${config.apiBaseUrl.replace(/\/api$/, "")}/assets/${docId}/${finalSrc.replace(/^\/*/, "")}`;
 							} else if (finalSrc.startsWith('/assets/')) {
 								finalSrc = `${config.apiBaseUrl.replace(/\/api$/, "")}${finalSrc}`;
 							}
+						}
+						const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(finalSrc);
+						if (isVideo) {
+							return (
+								<video
+									src={finalSrc}
+									controls
+									style={{ maxWidth: '100%', borderRadius: '1rem', margin: '1.5rem 0' }}
+								>
+									{alt || "Your browser does not support the video tag."}
+								</video>
+							);
 						}
 						return (
 							/* eslint-disable @next/next/no-img-element */
@@ -226,7 +238,7 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 								className="my-6 sm:my-8 rounded-2xl border border-gray-700/50 shadow-2xl"
 								style={{ maxWidth: '100%', height: 'auto' }}
 							/>
-						)
+						);
 					},
 					ul: ({ children }) => (
 						<ul className="list-none my-4 sm:my-6 space-y-2 text-gray-300 text-base sm:text-lg">{children}</ul>

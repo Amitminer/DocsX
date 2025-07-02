@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useRef, useCallback } from "react"
+import { useState, useRef, useCallback, useEffect } from "react"
 import { Save, X, FileText, UploadCloud, Maximize2 } from "lucide-react"
 import { Combobox } from "@headlessui/react"
 import MarkdownPreview from "./doc-view/markdown-preview"
@@ -116,8 +116,8 @@ export default function DocForm({
 			const altText = newAsset.original_name.split('.').slice(0, -1).join('');
 			const isImage = newAsset.mime_type && newAsset.mime_type.startsWith('image/');
 			const markdownToInsert = isImage
-				? `![${altText}](${newAsset.url})`
-				: `[${newAsset.original_name}](${newAsset.url})`;
+				? `![${altText}](${newAsset.filename})`
+				: `[${newAsset.original_name}](${newAsset.filename})`;
 			if (contentRef.current) {
 				const { selectionStart, selectionEnd } = contentRef.current;
 				const currentContent = contentRef.current.value;
@@ -215,6 +215,14 @@ export default function DocForm({
 			console.error("Error enhancing content:", error);
 		}
 	}
+
+	useEffect(() => {
+		const handler = () => {
+			if (typeof fetchAssets === "function") fetchAssets();
+		};
+		window.addEventListener('refresh-assets', handler);
+		return () => window.removeEventListener('refresh-assets', handler);
+	}, [fetchAssets]);
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 overflow-auto">

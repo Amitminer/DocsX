@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import CodeBlock from "./code-block"
 import { config } from "@/lib/config"
+import rehypeRaw from "rehype-raw"
 
 interface MarkdownPreviewProps {
 	content: string
@@ -59,6 +60,7 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 					<div className="prose prose-invert prose-purple max-w-none">
 						<ReactMarkdown
 							remarkPlugins={[remarkGfm]}
+							rehypePlugins={[rehypeRaw]}
 							components={{
 								code(props) {
 									const { children, className, ...rest } = props
@@ -81,25 +83,34 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 								},
 								img: (props) => {
 									if (!props.src) {
-										return null; // Don't render anything if src is empty
+										return null;
 									}
 									let finalSrc = typeof props.src === "string" ? props.src : "";
 									if (docId) {
-										// regex mess lol
 										if (finalSrc.startsWith('/docs/')) {
-											// Convert /docs/{docId}/{filename} to /assets/{docId}/{filename}
 											const parts = finalSrc.split("/");
 											const filename = parts.slice(3).join("/");
 											finalSrc = `${config.apiBaseUrl.replace(/\/api$/, "")}/assets/${docId}/${filename}`;
 										} else if (!finalSrc.startsWith('http') && !finalSrc.startsWith('/assets/')) {
-											// Bare filename or other relative, treat as asset
 											finalSrc = `${config.apiBaseUrl.replace(/\/api$/, "")}/assets/${docId}/${finalSrc.replace(/^\/*/, "")}`;
 										} else if (finalSrc.startsWith('/assets/')) {
 											finalSrc = `${config.apiBaseUrl.replace(/\/api$/, "")}${finalSrc}`;
 										}
 									}
-									/* eslint-disable @next/next/no-img-element */
+									const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(finalSrc);
+									if (isVideo) {
+										return (
+											<video
+												src={finalSrc}
+												controls
+												style={{ maxWidth: '100%', borderRadius: '1rem', margin: '1.5rem 0' }}
+											>
+												{props.alt || "Your browser does not support the video tag."}
+											</video>
+										);
+									}
 									return (
+										/* eslint-disable @next/next/no-img-element */
 										<img
 											{...props}
 											src={finalSrc}
