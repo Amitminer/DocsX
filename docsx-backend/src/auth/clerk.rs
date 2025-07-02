@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - Clerk Authentication
+//! Copyright 2024 AmitxD
+//!
+//! This module handles the authentication logic using Clerk.
+//! It provides a way to verify JWT tokens and extract user information.
+//! It's the bouncer of our club, checking IDs at the door.
+
 use crate::utils::error::{AppError, AppResult};
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use reqwest;
@@ -6,35 +13,61 @@ use std::collections::HashMap;
 use std::env;
 use tokio::sync::Mutex as TokioMutex;
 
+/// The claims contained in the Clerk JWT.
+/// This is the information we get from Clerk about the user.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ClerkClaims {
-    pub sub: String,           // User ID
-    pub email: Option<String>, // User email (optional)
+    /// The user ID.
+    pub sub: String,
+    /// The user's email address.
+    pub email: Option<String>,
+    /// The user's given name.
     pub given_name: Option<String>,
+    /// The user's family name.
     pub family_name: Option<String>,
+    /// The user's username.
     pub username: Option<String>,
-    pub exp: usize,  // Expiration time
-    pub iat: usize,  // Issued at
-    pub iss: String, // Issuer
+    /// The expiration time of the token.
+    pub exp: usize,
+    /// The time the token was issued at.
+    pub iat: usize,
+    /// The issuer of the token.
+    pub iss: String,
 }
 
+/// The user information extracted from the JWT.
+/// This is the information we use to identify the user in our system.
 #[derive(Debug, Clone)]
 pub struct UserInfo {
+    /// The user ID.
     pub user_id: String,
+    /// The user's username.
     pub username: Option<String>,
 }
 
+/// The Clerk authentication service.
+/// This service is responsible for verifying JWT tokens from Clerk.
 pub struct ClerkAuth {
     jwks_cache: TokioMutex<HashMap<String, DecodingKey>>,
 }
 
 impl ClerkAuth {
+    /// Creates a new `ClerkAuth` instance.
     pub fn new() -> Self {
         Self {
             jwks_cache: TokioMutex::new(HashMap::new()),
         }
     }
 
+    /// Verifies a JWT token and extracts the user information.
+    ///
+    /// # Arguments
+    ///
+    /// * `token` - The JWT token to verify.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing the `UserInfo` if the token is valid, or an `AppError` otherwise.
     pub async fn verify_token(&self, token: &str) -> AppResult<UserInfo> {
         // Remove "Bearer " prefix if present
         let token = token.strip_prefix("Bearer ").unwrap_or(token);
@@ -97,6 +130,15 @@ impl ClerkAuth {
         })
     }
 
+    /// Gets the decoding key for a given key ID (kid).
+    ///
+    /// # Arguments
+    ///
+    /// * `kid` - The key ID to get the decoding key for.
+    ///
+    /// # Returns
+    ///
+    /// A `Result` containing the `DecodingKey` if it is found, or an `AppError` otherwise.
     async fn get_decoding_key(&self, kid: &str) -> AppResult<DecodingKey> {
         log::debug!("Getting decoding key for kid: {}", kid);
 
@@ -150,16 +192,19 @@ impl ClerkAuth {
         Ok(decoding_key)
     }
 
+    /// Gets the Clerk issuer URL from the environment variables.
     fn get_issuer(&self) -> String {
         env::var("CLERK_ISSUER").expect("CLERK_ISSUER environment variable must be set!")
     }
 }
 
+/// The response from the JWKS endpoint.
 #[derive(Debug, Deserialize)]
 struct JWKSResponse {
     keys: Vec<Jwk>,
 }
 
+/// A JSON Web Key (JWK).
 #[derive(Debug, Deserialize)]
 struct Jwk {
     kid: String,

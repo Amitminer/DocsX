@@ -1,11 +1,28 @@
+//! AmitxD ProjectName(DocsX) - PostgreSQL Database
+//! Copyright 2024 AmitxD
+//!
+//! This module handles the connection to the PostgreSQL database.
+//! It provides functions for creating a connection pool and initializing the database schema.
+//! It's the foundation of our data persistence layer.
+
 use crate::utils::error::AppError;
 use deadpool_postgres::{Config, Pool, Runtime};
 use std::time::Duration;
 use tokio::time::sleep;
 use tokio_postgres::NoTls;
 
+/// A type alias for the database connection pool.
 pub type DbPool = Pool;
 
+/// Creates a new database connection pool.
+///
+/// # Arguments
+///
+/// * `database_url` - The URL of the database to connect to.
+///
+/// # Returns
+///
+/// A `Result` containing the `DbPool` if the connection is successful, or an `AppError` otherwise.
 pub async fn create_pool(database_url: &str) -> Result<DbPool, AppError> {
     // Parse the database URL using url crate for easier parsing
     let url = url::Url::parse(database_url).map_err(|e| {
@@ -34,7 +51,16 @@ pub async fn create_pool(database_url: &str) -> Result<DbPool, AppError> {
     Ok(pool)
 }
 
-/// Tries to create a pool with retry logic, retrying if connection fails (e.g. Postgres not ready yet)
+/// Tries to create a pool with retry logic, retrying if connection fails (e.g. Postgres not ready yet).
+///
+/// # Arguments
+///
+/// * `database_url` - The URL of the database to connect to.
+/// * `max_retries` - The maximum number of times to retry the connection.
+///
+/// # Returns
+///
+/// A `Result` containing the `DbPool` if the connection is successful, or an `AppError` otherwise.
 pub async fn create_pool_with_retry(
     database_url: &str,
     max_retries: usize,
@@ -67,6 +93,15 @@ pub async fn create_pool_with_retry(
     }
 }
 
+/// Initializes the database by creating the necessary tables and indexes.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+///
+/// # Returns
+///
+/// A `Result` containing `()` if the initialization is successful, or an `AppError` otherwise.
 pub async fn init_db(pool: &DbPool) -> Result<(), AppError> {
     let client = pool.get().await?;
 

@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - Auth Middleware
+//! Copyright 2024 AmitxD
+//!
+//! This module provides the authentication middleware for the application.
+//! It verifies the JWT token from the `Authorization` header and extracts the user information.
+//! It's the gatekeeper of our API, ensuring that only authenticated users can access protected routes.
+
 use crate::utils::error::AppError;
 
 use super::clerk::{ClerkAuth, UserInfo};
@@ -11,11 +18,14 @@ use std::rc::Rc;
 use std::sync::Arc;
 use tokio::sync::Mutex as TokioMutex;
 
+/// The authentication middleware for the application.
+/// It wraps the Clerk authentication service and provides it to the request handlers.
 pub struct AuthMiddleware {
     clerk_auth: Arc<TokioMutex<ClerkAuth>>,
 }
 
 impl AuthMiddleware {
+    /// Creates a new `AuthMiddleware` instance.
     pub fn new() -> Self {
         Self {
             clerk_auth: Arc::new(TokioMutex::new(ClerkAuth::new())),
@@ -43,6 +53,8 @@ where
     }
 }
 
+/// The authentication middleware service.
+/// It verifies the JWT token from the `Authorization` header and extracts the user information.
 pub struct AuthMiddlewareService<S> {
     service: Rc<S>,
     clerk_auth: Arc<TokioMutex<ClerkAuth>>,
@@ -97,16 +109,18 @@ where
     }
 }
 
-// Helper function to extract user from request
+/// Extracts the user information from the request extensions.
+///
+/// # Arguments
+///
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `UserInfo` if the user is authenticated, or an `AppError` otherwise.
 pub fn extract_user_from_request(req: &HttpRequest) -> Result<UserInfo, AppError> {
     req.extensions()
         .get::<UserInfo>()
         .cloned()
         .ok_or(AppError::Unauthorized)
 }
-
-// // Helper to extract user_id as String
-// fn extract_user_id(req: &HttpRequest) -> AppResult<String> {
-//     let user_info = extract_user_from_request(req)?;
-//     Ok(user_info.user_id)
-// }

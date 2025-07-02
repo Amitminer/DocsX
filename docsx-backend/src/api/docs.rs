@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - Docs API
+//! Copyright 2024 AmitxD
+//!
+//! This module defines the API endpoints for managing documents.
+//! It handles everything from creating, reading, updating, and deleting documents
+//! to managing likes and views. It's the core of the DocsX API.
+
 use crate::auth::middleware::{extract_user_from_request, AuthMiddleware};
 use crate::db::postgres::DbPool;
 use crate::handlers::doc_handler::DocHandler;
@@ -9,15 +16,19 @@ use serde::Deserialize;
 use serde_json::json;
 use uuid::Uuid;
 
-// Query parameter structs
+/// Represents the query parameters for getting a single document by ID.
 #[derive(Deserialize)]
 pub struct IdQuery {
+    /// The unique identifier of the document.
     pub id: String,
 }
 
+/// Represents the query parameters for liking or unliking a document.
 #[derive(Deserialize)]
 pub struct LikeQuery {
+    /// The unique identifier of the document.
     pub id: String,
+    /// The number of likes to add.
     pub count: Option<i32>,
 }
 
@@ -25,7 +36,11 @@ pub struct LikeQuery {
 const MAX_LIKES_PER_REQUEST: i32 = 100;
 const MIN_LIKES_COUNT: i32 = 0;
 
-/// Configure all document-related routes
+/// Configures all document-related routes.
+///
+/// # Arguments
+///
+/// * `cfg` - The service configuration.
 pub fn config(cfg: &mut web::ServiceConfig) {
     configure_public_routes(cfg);
     crate::api::slugs::config(cfg);
@@ -33,14 +48,22 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     configure_fallback(cfg);
 }
 
-/// Configure public routes that don't require authentication
+/// Configures public routes that don't require authentication.
+///
+/// # Arguments
+///
+/// * `cfg` - The service configuration.
 fn configure_public_routes(cfg: &mut web::ServiceConfig) {
     cfg.route("/health", web::get().to(check_health));
     cfg.route("/docs", web::get().to(get_docs))
         .route("/docs/view", web::post().to(increment_views));
 }
 
-/// Configure protected routes that require authentication
+/// Configures protected routes that require authentication.
+///
+/// # Arguments
+///
+/// * `cfg` - The service configuration.
 fn configure_protected_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("")
@@ -53,7 +76,12 @@ fn configure_protected_routes(cfg: &mut web::ServiceConfig) {
             .route("/docs/likes", web::get().to(get_likes)),
     );
 }
-/// Configure fallback route for unmatched requests
+
+/// Configures a fallback route for unmatched requests.
+///
+/// # Arguments
+///
+/// * `cfg` - The service configuration.
 fn configure_fallback(cfg: &mut web::ServiceConfig) {
     cfg.default_service(web::route().to(|| async {
         HttpResponse::NotFound().json(json!({
@@ -62,7 +90,11 @@ fn configure_fallback(cfg: &mut web::ServiceConfig) {
     }));
 }
 
-/// Health Checker Endpoint
+/// The health checker endpoint.
+///
+/// # Returns
+///
+/// An `HttpResponse` with a status of "ok" if the backend is healthy.
 async fn check_health() -> HttpResponse {
     HttpResponse::Ok().json(json!({
         "status": "ok",
@@ -74,7 +106,17 @@ async fn check_health() -> HttpResponse {
 // PUBLIC ENDPOINTS
 // ============================================================================
 
-/// Get documents - either all documents or a specific document by ID
+/// Gets documents. Can be all documents or a specific document by ID.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters for filtering and pagination.
+/// * `id_query` - An optional query parameter for getting a single document by ID.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn get_docs(
     pool: web::Data<DbPool>,
     query: web::Query<DocsQuery>,
@@ -86,7 +128,17 @@ pub async fn get_docs(
     }
 }
 
-/// Get likes for a specific document
+/// Gets the likes for a specific document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters containing the document ID.
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn get_likes(
     pool: web::Data<DbPool>,
     query: web::Query<IdQuery>,
@@ -99,14 +151,32 @@ pub async fn get_likes(
     Ok(HttpResponse::Ok().json(response))
 }
 
-/// Get a single document by ID
+/// Gets a single document by ID.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `id_str` - The ID of the document to retrieve.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 async fn get_single_doc(pool: &web::Data<DbPool>, id_str: &str) -> Result<HttpResponse, AppError> {
     let doc_id = parse_uuid(id_str)?;
     let doc = DocHandler::get_doc_by_id(pool, doc_id, None).await?;
     Ok(HttpResponse::Ok().json(doc))
 }
 
-/// Get all documents with optional query parameters
+/// Gets all documents with optional query parameters.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters for filtering and pagination.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 async fn get_all_docs(
     pool: &web::Data<DbPool>,
     query: DocsQuery,
@@ -115,7 +185,17 @@ async fn get_all_docs(
     Ok(HttpResponse::Ok().json(response))
 }
 
-/// Increment document views with rate limiting
+/// Increments the view count of a document with rate limiting.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters containing the document ID.
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 async fn increment_views(
     pool: web::Data<DbPool>,
     query: web::Query<IdQuery>,
@@ -146,7 +226,17 @@ async fn increment_views(
 // PROTECTED ENDPOINTS
 // ============================================================================
 
-/// Create a new document
+/// Creates a new document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `req` - The request to create the document.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn create_doc(
     pool: web::Data<DbPool>,
     req: web::Json<CreateDocRequest>,
@@ -160,7 +250,18 @@ pub async fn create_doc(
     Ok(HttpResponse::Created().json(doc))
 }
 
-/// Update an existing document
+/// Updates an existing document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters containing the document ID.
+/// * `req` - The request to update the document.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn update_doc(
     pool: web::Data<DbPool>,
     query: web::Query<IdQuery>,
@@ -176,7 +277,17 @@ pub async fn update_doc(
     Ok(HttpResponse::Ok().json(doc))
 }
 
-/// Delete a document
+/// Deletes a document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters containing the document ID.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn delete_doc(
     pool: web::Data<DbPool>,
     query: web::Query<IdQuery>,
@@ -193,7 +304,17 @@ pub async fn delete_doc(
     })))
 }
 
-/// Add likes to a document
+/// Adds likes to a document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters containing the document ID and like count.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn add_likes(
     pool: web::Data<DbPool>,
     query: web::Query<LikeQuery>,
@@ -210,7 +331,17 @@ pub async fn add_likes(
     Ok(HttpResponse::Ok().json(response))
 }
 
-/// Remove a like from a document
+/// Removes a like from a document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `query` - The query parameters containing the document ID.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// A `Result` containing the `HttpResponse`.
 pub async fn remove_like(
     pool: web::Data<DbPool>,
     query: web::Query<LikeQuery>,
@@ -227,12 +358,28 @@ pub async fn remove_like(
 // HELPER FUNCTIONS
 // ============================================================================
 
-/// Parse a string into a UUID
+/// Parses a string into a UUID.
+///
+/// # Arguments
+///
+/// * `id_str` - The string to parse.
+///
+/// # Returns
+///
+/// A `Result` containing the `Uuid` if parsing was successful, or an `AppError` otherwise.
 fn parse_uuid(id_str: &str) -> Result<Uuid, AppError> {
     Uuid::parse_str(id_str).map_err(|_| AppError::Validation("Invalid UUID format".to_string()))
 }
 
-/// Validate like count is within acceptable bounds
+/// Validates that the like count is within acceptable bounds.
+///
+/// # Arguments
+///
+/// * `count` - The like count to validate.
+///
+/// # Returns
+///
+/// A `Result` containing `()` if the like count is valid, or an `AppError` otherwise.
 fn validate_like_count(count: i32) -> Result<(), AppError> {
     if count < MIN_LIKES_COUNT {
         return Err(AppError::Validation(
@@ -250,18 +397,42 @@ fn validate_like_count(count: i32) -> Result<(), AppError> {
     Ok(())
 }
 
-/// Extract user ID from HTTP request
+/// Extracts the user ID from the HTTP request.
+///
+/// # Arguments
+///
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// An `AppResult` containing the user ID.
 fn extract_user_id(req: &HttpRequest) -> AppResult<String> {
     let user_info = extract_user_from_request(req)?;
     Ok(user_info.user_id)
 }
 
-/// Extract user ID from HTTP request
+/// Extracts the user ID from the HTTP request, if it exists.
+///
+/// # Arguments
+///
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// An `Option` containing the user ID if it exists, or `None` otherwise.
 fn extract_user_id_optional(req: &HttpRequest) -> Option<String> {
     extract_user_from_request(req).ok().map(|info| info.user_id)
 }
 
-/// Extract username from HTTP request
+/// Extracts the username from the HTTP request, if it exists.
+///
+/// # Arguments
+///
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// An `Option` containing the username if it exists, or `None` otherwise.
 fn extract_username(req: &HttpRequest) -> Option<String> {
     extract_user_from_request(req)
         .ok()

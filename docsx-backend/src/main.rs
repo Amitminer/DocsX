@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - Main Entry Point
+//! Copyright 2024 AmitxD
+//!
+//! This is the main entry point for the DocsX backend server.
+//! It sets up the database connection, initializes the logger, configures CORS,
+//! and starts the Actix web server. It's the conductor of our orchestra.
+
 mod api;
 mod auth;
 mod db;
@@ -11,6 +18,19 @@ use db::postgres::{create_pool_with_retry, init_db};
 use dotenvy::dotenv;
 use std::env;
 
+/// The main function that starts the DocsX backend server.
+///
+/// This function performs the following steps:
+/// 1. Loads environment variables from a `.env` file.
+/// 2. Initializes the logger.
+/// 3. Connects to the PostgreSQL database with retry logic.
+/// 4. Initializes the database schema.
+/// 5. Configures and starts the Actix web server.
+///
+/// # Returns
+///
+/// A `std::io::Result<()>` which is `Ok(())` if the server runs successfully,
+/// or an `Err` if the server fails to start.
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // Load environment variables from `.env` file
@@ -68,7 +88,15 @@ async fn main() -> std::io::Result<()> {
     .await
 }
 
-/// Configures CORS middleware with allowed origins from .env
+/// Configures CORS middleware with allowed origins from the `ALLOWED_ORIGIN` environment variable.
+///
+/// This function reads the `ALLOWED_ORIGIN` environment variable, which is expected to be a
+/// comma-separated list of URLs. It then configures the `Cors` middleware to allow requests
+/// from these origins.
+///
+/// # Returns
+///
+/// A `Cors` middleware instance configured with the allowed origins.
 fn configure_cors() -> Cors {
     let origins = env::var("ALLOWED_ORIGIN").unwrap_or_default();
 

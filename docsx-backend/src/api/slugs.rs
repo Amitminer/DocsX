@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - Slugs API
+//! Copyright 2024 AmitxD
+//!
+//! This module defines the API endpoints for managing custom URL slugs for documents.
+//! It allows users to create, retrieve, and delete custom slugs for their documents,
+//! making them more accessible and user-friendly.
+
 use crate::auth::middleware::{extract_user_from_request, AuthMiddleware};
 use crate::db::postgres::DbPool;
 use crate::utils::error::AppError;
@@ -6,18 +13,29 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+/// Represents the request to set a custom slug for a document.
 #[derive(Deserialize)]
 pub struct SetSlugRequest {
+    /// The unique identifier of the document.
     pub doc_id: Uuid,
+    /// The custom slug to be set.
     pub slug: String,
 }
 
+/// Represents the response for a slug operation.
 #[derive(Serialize)]
 pub struct SlugResponse {
+    /// The unique identifier of the document.
     pub doc_id: Uuid,
+    /// The custom slug.
     pub slug: String,
 }
 
+/// Configures the routes for the slugs API.
+///
+/// # Arguments
+///
+/// * `cfg` - The service configuration.
 pub fn config(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/slugs")
@@ -31,7 +49,17 @@ pub fn config(cfg: &mut web::ServiceConfig) {
     );
 }
 
-/// Set or update a custom slug for a doc (auth required)
+/// Sets or updates a custom slug for a document. This operation requires authentication.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `req` - The request to set the slug.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn set_slug(
     pool: web::Data<DbPool>,
     req: web::Json<SetSlugRequest>,
@@ -81,7 +109,16 @@ pub async fn set_slug(
     Ok(HttpResponse::Ok().json(SlugResponse { doc_id, slug }))
 }
 
-/// Get doc_id for a given slug
+/// Gets the document ID for a given slug.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `path` - The slug to look up.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn get_slug(
     pool: web::Data<DbPool>,
     path: web::Path<String>,
@@ -99,7 +136,17 @@ pub async fn get_slug(
     }
 }
 
-/// Delete a slug (auth required)
+/// Deletes a slug. This operation requires authentication.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `path` - The slug to delete.
+/// * `http_req` - The HTTP request.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn delete_slug(
     pool: web::Data<DbPool>,
     path: web::Path<String>,
@@ -132,6 +179,15 @@ pub async fn delete_slug(
     Ok(HttpResponse::Ok().json(serde_json::json!({ "success": true })))
 }
 
+/// Gets all slugs.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn get_all_slugs(pool: web::Data<DbPool>) -> Result<HttpResponse, AppError> {
     println!("get_all_slugs called!");
     let client = pool.get().await?;
@@ -150,6 +206,15 @@ pub async fn get_all_slugs(pool: web::Data<DbPool>) -> Result<HttpResponse, AppE
     Ok(HttpResponse::Ok().json(slugs))
 }
 
+/// Checks if a slug is valid.
+///
+/// # Arguments
+///
+/// * `slug` - The slug to validate.
+///
+/// # Returns
+///
+/// `true` if the slug is valid, `false` otherwise.
 fn is_valid_slug(slug: &str) -> bool {
     let re = regex::Regex::new(r"^[a-z0-9][a-z0-9-_]{2,62}$").unwrap();
     re.is_match(slug)

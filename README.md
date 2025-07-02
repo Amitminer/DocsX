@@ -2,15 +2,15 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Stop repeating yourself!** DocsX is a blazing-fast documentation and tutorial platform to help you create, share, and discover tutorials and docs—powered by AI and a modern tech stack.
+**DocsX** is a blazing-fast, AI-powered documentation and tutorial platform. Create, share, and discover docs and tutorials with instant search, smart AI features, and a beautiful modern UI.
 
 ---
 
 ## ✨ Features
 
-- 📝 **Markdown Docs & Tutorials**: Write and edit in rich Markdown.
-- ⚡ **Instant Search**: Find docs and answers in milliseconds.
-- 🤖 **AI Summaries & Enhancement**: Google AI for smarter docs.
+- 📝 **Markdown Docs & Tutorials**: Rich editing and viewing in Markdown.
+- ⚡ **Instant Search**: Millisecond-fast, full-text search.
+- 🤖 **AI Summaries & Enhancement**: Google AI (Gemini) for smarter docs.
 - 🔒 **Secure Auth**: Clerk + JWT for robust authentication.
 - 💬 **Community Engagement**: Like, bookmark, and interact.
 - 🌗 **Modern UI**: Next.js 15 + Tailwind CSS, dark mode by default.
@@ -19,41 +19,44 @@
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
-On **Linux**, you can simply run:
+### One-liner (Linux)
 
 ```bash
 chmod +x start.sh
 ./start.sh
 ```
 
-This will:
-- Install Docker & Docker Compose if missing
-- Set up your .env file
-- Start DocsX with Docker Compose
+- Installs Docker & Docker Compose if missing
+- Sets up your `.env` file
+- Starts DocsX with Docker Compose
 
-*Only for Linux users. For other OS, follow the manual Docker or local setup below.*
+*For other OS, see manual setup below.*
 
 ---
 
-### 🛠️ Local Development Setup
+## 🛠️ Manual Setup
 
-#### Prerequisites
+### Prerequisites
+
 - [Rust (latest stable)](https://www.rust-lang.org/tools/install)
 - [Node.js v20+](https://nodejs.org/)
 - [pnpm](https://pnpm.io/)
+- [Docker](https://docs.docker.com/get-docker/) (optional, for containers)
 
-#### Backend (Rust + Actix)
+### Backend (Rust + Actix)
+
 ```bash
 cd docsx-backend
 cp env.example .env
 # Edit .env with your config
 cargo run --release
 ```
-Runs at: `http://localhost:8080`
+Runs at: [http://localhost:8080](http://localhost:8080)
 
-#### Frontend (Next.js + Tailwind)
+### Frontend (Next.js + Tailwind)
+
 ```bash
 cd docsx-frontend
 pnpm install
@@ -61,19 +64,12 @@ cp env.example .env.local
 # Edit .env.local with your config
 pnpm run dev
 ```
-Runs at: `http://localhost:3000`
+Runs at: [http://localhost:3000](http://localhost:3000)
 
 ---
 
 ## 🐳 Docker Support
 
-You only need to edit the **root `.env` file** for all environment variables. Docker Compose will automatically use this file for both frontend and backend services.
-
-#### Prerequisites
-- [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose v2+](https://docs.docker.com/compose/install/)
-
-#### ▶️ Run Everything with Docker
 ```bash
 git clone https://github.com/Amitminer/DocsX
 cd DocsX
@@ -81,22 +77,23 @@ cp .env.example .env
 # Edit .env with your keys (Clerk, Google AI, database, etc.)
 docker-compose up --build
 ```
+
 - Frontend: [http://localhost:3000](http://localhost:3000)
 - Backend: [http://localhost:8080](http://localhost:8080)
 
 ---
 
-## ⚙️ Environment Configuration
+## ⚙️ Environment Variables
 
-- Edit the root `.env` file with your Clerk, Google AI, and database keys.
-- No need to edit service-specific env files for Docker usage.
-- See `.env.example` for required variables.
+- Edit the root `.env` file for Docker, or service-specific `.env` files for local dev.
+- See `.env.example` and `docsx-backend/env.example` for required variables.
 
 ---
 
 ## 📡 API Reference
 
-See [API Usage](docsx-backend/API_USAGE.md) for full details and examples.
+- Full API docs: [docsx-backend/API_USAGE.md](docsx-backend/API_USAGE.md)
+- Example endpoints: `/api/docs`, `/api/assets`, `/api/slugs`
 
 ---
 
@@ -113,17 +110,30 @@ See [API Usage](docsx-backend/API_USAGE.md) for full details and examples.
 ---
 
 ## 📂 Project Structure
+
 ```
 DocsX/
   docsx-frontend/    # Next.js frontend
   docsx-backend/     # Rust backend
   README.md          # (this file)
-  DEPLOYMENT.md      # Deployment guide
+  docker-compose.yml # Docker orchestration
+  start.sh           # Linux quickstart script
 ```
 
 ---
 
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes (+ tests if needed)
+4. Ensure all tests pass
+5. Submit a pull request
+
+---
+
 ## 📄 More Info
+
 - [Frontend Docs](docsx-frontend/README.md)
 - [Backend Docs](docsx-backend/README.md)
 - [API Usage](docsx-backend/API_USAGE.md)
@@ -131,7 +141,14 @@ DocsX/
 ---
 
 ## 📄 License
+
 This project is licensed under the [MIT License](LICENSE).
 
 © 2025 [AmitxD](https://github.com/Amitminer)
+
+---
+
+**Built with Rust, Actix Web, Next.js, TypeScript, and ❤️**
+
+---
  

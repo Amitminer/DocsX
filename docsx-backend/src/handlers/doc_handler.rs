@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - doc_handler
+//! Copyright 2024 AmitxD
+//!
+//! This module is the heart of the document management system.
+//! It contains all the business logic for creating, reading, updating, and deleting documents.
+//! It's the engine that powers the entire documentation platform.
+
 use crate::db::postgres::DbPool;
 use crate::models::doc::{
     CreateDocRequest, Doc, DocsQuery, DocsResponse, LikesResponse, UpdateDocRequest,
@@ -44,10 +51,21 @@ const CHECK_VIEW_RATE_LIMIT: &str =
 const INSERT_VIEW_RECORD: &str = "INSERT INTO doc_views (doc_id, ip_hash, last_viewed) VALUES ($1, $2, NOW()) ON CONFLICT (doc_id, ip_hash) DO UPDATE SET last_viewed = NOW()";
 const INCREMENT_VIEWS: &str = "UPDATE docs SET views = views + 1 WHERE id = $1 RETURNING views";
 
+/// A handler for all document-related operations.
+/// This struct is the main entry point for all document-related business logic.
 pub struct DocHandler;
 
 impl DocHandler {
-    /// Get all documents with optional filtering, searching, and pagination
+    /// Gets all documents with optional filtering, searching, and pagination.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `query` - The query parameters for filtering, searching, and pagination.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the `DocsResponse`.
     pub async fn get_all_docs(pool: &DbPool, query: DocsQuery) -> AppResult<DocsResponse> {
         let client = pool.get().await?;
 
@@ -69,7 +87,17 @@ impl DocHandler {
         })
     }
 
-    /// Get a single document by ID with optional user context for likes
+    /// Gets a single document by ID with optional user context for likes.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document to retrieve.
+    /// * `user_id` - An optional user ID to check if the user has liked the document.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the `Doc`.
     pub async fn get_doc_by_id(pool: &DbPool, id: Uuid, user_id: Option<&str>) -> AppResult<Doc> {
         let client = pool.get().await?;
 
@@ -84,7 +112,18 @@ impl DocHandler {
         Ok(doc)
     }
 
-    /// Create a new document
+    /// Creates a new document.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `req` - The request to create the document.
+    /// * `author_id` - The ID of the author of the document.
+    /// * `author_name` - The name of the author of the document.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the created `Doc`.
     pub async fn create_doc(
         pool: &DbPool,
         req: CreateDocRequest,
@@ -120,7 +159,17 @@ impl DocHandler {
         Ok(doc)
     }
 
-    /// Get likes information for a document
+    /// Gets the likes information for a document.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document.
+    /// * `user_id` - An optional user ID to check if the user has liked the document.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the `LikesResponse`.
     pub async fn get_likes(
         pool: &DbPool,
         id: Uuid,
@@ -138,7 +187,18 @@ impl DocHandler {
         })
     }
 
-    /// Add a like to a document
+    /// Adds a like to a document.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document to like.
+    /// * `user_id` - The ID of the user who is liking the document.
+    /// * `count` - The number of likes to add.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the `LikesResponse`.
     pub async fn add_like(
         pool: &DbPool,
         id: Uuid,
@@ -172,7 +232,17 @@ impl DocHandler {
         })
     }
 
-    /// Remove a like from a document
+    /// Removes a like from a document.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document to unlike.
+    /// * `user_id` - The ID of the user who is unliking the document.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the `LikesResponse`.
     pub async fn remove_like(pool: &DbPool, id: Uuid, user_id: &str) -> AppResult<LikesResponse> {
         let client = pool.get().await?;
 
@@ -199,7 +269,19 @@ impl DocHandler {
         })
     }
 
-    /// Update an existing document
+    /// Updates an existing document.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document to update.
+    /// * `req` - The request to update the document.
+    /// * `author_id` - The ID of the author of the document.
+    /// * `username` - The username of the user performing the update.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the updated `Doc`.
     pub async fn update_doc(
         pool: &DbPool,
         id: Uuid,
@@ -259,7 +341,18 @@ impl DocHandler {
         Ok(doc)
     }
 
-    /// Delete a document
+    /// Deletes a document.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document to delete.
+    /// * `author_id` - The ID of the author of the document.
+    /// * `username` - The username of the user performing the deletion.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing `()` if the deletion was successful.
     pub async fn delete_doc(
         pool: &DbPool,
         id: Uuid,
@@ -280,7 +373,17 @@ impl DocHandler {
         }
     }
 
-    /// Increment document views with rate limiting
+    /// Increments the view count of a document with rate limiting.
+    ///
+    /// # Arguments
+    ///
+    /// * `pool` - The database pool.
+    /// * `id` - The ID of the document.
+    /// * `ip_hash` - The hash of the IP address of the user viewing the document.
+    ///
+    /// # Returns
+    ///
+    /// An `AppResult` containing the new view count.
     pub async fn increment_views(pool: &DbPool, id: Uuid, ip_hash: &str) -> AppResult<i32> {
         let client = pool.get().await?;
 
@@ -310,59 +413,13 @@ impl DocHandler {
 
         Ok(new_views)
     }
-
-    // Update document tags
-    // pub async fn update_doc_tags(pool: &DbPool, doc_id: Uuid, tags: Vec<String>) -> AppResult<()> {
-    //     let mut client = pool.get().await?;
-
-    //     // Verify document exists
-    //     Self::get_doc_by_id(pool, doc_id, None).await?;
-
-    //     // Start transaction
-    //     let transaction = client.transaction().await?;
-
-    //     // Delete existing tags
-    //     transaction.execute(DELETE_DOC_TAGS, &[&doc_id]).await?;
-
-    //     // Insert new tags
-    //     for tag in &tags {
-    //         if !tag.trim().is_empty() {
-    //             transaction
-    //                 .execute(INSERT_DOC_TAGS, &[&doc_id, &tag.trim().to_lowercase()])
-    //                 .await?;
-    //         }
-    //     }
-
-    //     // Update tags array in docs table
-    //     let tags_array = tags
-    //         .iter()
-    //         .map(|t| t.trim().to_lowercase())
-    //         .collect::<Vec<_>>();
-    //     transaction
-    //         .execute(
-    //             "UPDATE docs SET tags = $1 WHERE id = $2",
-    //             &[&tags_array, &doc_id],
-    //         )
-    //         .await?;
-
-    //     transaction.commit().await?;
-    //     Ok(())
-    // }
-
-    // /// Get tags for a document
-    // pub async fn get_doc_tags(pool: &DbPool, doc_id: Uuid) -> AppResult<Vec<String>> {
-    //     let client = pool.get().await?;
-    //     let rows = client.query(GET_DOC_TAGS, &[&doc_id]).await?;
-    //     let tags: Vec<String> = rows.into_iter().map(|row| row.get("tag")).collect();
-    //     Ok(tags)
-    // }
 }
 
 // ============================================================================
 // HELPER STRUCTURES
 // ============================================================================
 
-/// Helper structure for document creation data
+/// A helper structure for document creation data.
 struct DocumentData {
     id: Uuid,
     title: String,
@@ -377,6 +434,7 @@ struct DocumentData {
 }
 
 impl DocumentData {
+    /// Creates a new `DocumentData` instance.
     fn new(req: CreateDocRequest, author_id: String, author_name: Option<String>) -> Self {
         Self {
             id: Uuid::new_v4(),
@@ -392,6 +450,7 @@ impl DocumentData {
         }
     }
 
+    /// Returns the document data as a slice of `ToSql` trait objects.
     fn as_params(&self) -> [&(dyn tokio_postgres::types::ToSql + Sync); 10] {
         [
             &self.id,
@@ -412,7 +471,7 @@ impl DocumentData {
 // QUERY BUILDING HELPERS
 // ============================================================================
 
-/// Build SQL query with filters, search, and pagination
+/// Builds an SQL query with filters, search, and pagination.
 fn build_docs_query(
     query: &DocsQuery,
 ) -> (
@@ -510,7 +569,7 @@ fn build_docs_query(
     (sql, params, search_holders)
 }
 
-/// Parse smart search filters from search string
+/// Parses smart search filters from a search string.
 fn parse_smart_search(search: &str) -> (Vec<SmartFilter>, String) {
     let mut filters = Vec::new();
     let mut remaining_text = search.to_string();
@@ -569,7 +628,7 @@ fn parse_smart_search(search: &str) -> (Vec<SmartFilter>, String) {
     (filters, remaining_text)
 }
 
-/// Parse date range (e.g., "2024-01-01:2024-12-31" or "last_week")
+/// Parses a date range string into a start and end `DateTime`.
 fn parse_date_range(
     date_range: &str,
 ) -> Option<(chrono::DateTime<chrono::Utc>, chrono::DateTime<chrono::Utc>)> {
@@ -616,7 +675,7 @@ fn parse_date_range(
     }
 }
 
-/// Get sort field based on query and smart filters
+/// Gets the sort field based on the query and smart filters.
 fn get_sort_field(query: &DocsQuery) -> &'static str {
     // Check for sort filter in search
     if let Some(ref search) = query.search {
@@ -636,6 +695,7 @@ fn get_sort_field(query: &DocsQuery) -> &'static str {
     }
 }
 
+/// An enum representing the different smart filters that can be applied to a search.
 #[derive(Debug)]
 enum SmartFilter {
     Author(String),
@@ -645,7 +705,7 @@ enum SmartFilter {
     Sort(String),
 }
 
-/// Build update query for document updates
+/// Builds an update query for document updates.
 fn build_update_query(req: &UpdateDocRequest, id: Uuid) -> AppResult<MaybeSqlParams> {
     let mut updates = Vec::new();
     let mut params: Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>> = Vec::new();
@@ -684,7 +744,7 @@ fn build_update_query(req: &UpdateDocRequest, id: Uuid) -> AppResult<MaybeSqlPar
 // DATABASE OPERATION HELPERS
 // ============================================================================
 
-/// Count total documents matching the query
+/// Counts the total number of documents that match the query.
 async fn count_docs(client: &tokio_postgres::Client, query: &DocsQuery) -> AppResult<i64> {
     let mut count_sql = String::from("SELECT COUNT(*) FROM docs");
     let mut params: Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>> = Vec::new();
@@ -717,7 +777,7 @@ async fn count_docs(client: &tokio_postgres::Client, query: &DocsQuery) -> AppRe
     Ok(count_row.get(0))
 }
 
-/// Check if a user has liked a specific document
+/// Checks if a user has liked a specific document.
 async fn check_user_liked_doc(
     client: &tokio_postgres::Client,
     doc_id: Uuid,
@@ -736,13 +796,13 @@ async fn check_user_liked_doc(
 // VALIDATION AND AUTHORIZATION HELPERS
 // ============================================================================
 
-/// Validate request data
+/// Validates the request data.
 fn validate_request<T: Validate>(req: &T) -> AppResult<()> {
     req.validate()
         .map_err(|e| AppError::Validation(e.to_string()))
 }
 
-/// Verify user is document author or admin
+/// Verifies that the user is the author of the document or an admin.
 pub fn verify_author_or_admin(doc: &Doc, author_id: &str, username: Option<&str>) -> AppResult<()> {
     if doc.author_id == author_id {
         return Ok(());
@@ -758,12 +818,12 @@ pub fn verify_author_or_admin(doc: &Doc, author_id: &str, username: Option<&str>
 // UTILITY FUNCTIONS
 // ============================================================================
 
-/// Calculate total pages for pagination
+/// Calculates the total number of pages for pagination.
 fn calculate_total_pages(total: i64, limit: u32) -> u32 {
     ((total as f64) / (limit as f64)).ceil() as u32
 }
 
-/// Convert Vec<Box<dyn ToSql>> to Vec<&dyn ToSql> for query execution
+/// Converts a slice of `Box<dyn ToSql>` to a `Vec<&dyn ToSql>`.
 fn params_as_refs(
     params: &[Box<dyn tokio_postgres::types::ToSql + Send + Sync>],
 ) -> Vec<&(dyn tokio_postgres::types::ToSql + Sync)> {
@@ -773,7 +833,7 @@ fn params_as_refs(
         .collect()
 }
 
-/// Convert database row to Doc model
+/// Converts a database row to a `Doc` model.
 fn row_to_doc(row: Row) -> Doc {
     Doc {
         id: row.get("id"),
@@ -790,8 +850,10 @@ fn row_to_doc(row: Row) -> Doc {
     }
 }
 
+/// A type alias for a tuple containing an SQL string and a vector of parameters.
 type SqlParams = (
     String,
     Vec<Box<dyn tokio_postgres::types::ToSql + Send + Sync>>,
 );
+/// A type alias for an optional `SqlParams` tuple.
 type MaybeSqlParams = Option<SqlParams>;

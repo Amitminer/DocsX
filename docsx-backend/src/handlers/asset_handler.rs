@@ -1,3 +1,10 @@
+//! AmitxD ProjectName(DocsX) - asset_handler
+//! Copyright 2024 AmitxD
+//!
+//! This module handles all the business logic for asset management.
+//! From uploading, listing, serving, and deleting assets, this module has it all.
+//! It's the backbone of our asset management system, ensuring that all assets are handled with care.
+
 use crate::{
     auth::middleware::extract_user_from_request,
     db::postgres::DbPool,
@@ -21,18 +28,28 @@ use std::{
 };
 use uuid::Uuid;
 
+/// The maximum file size for videos, set to 50MB.
 const MAX_FILE_SIZE: usize = 50 * 1024 * 1024; // 50 MB for videos
+/// The maximum file size for images, set to 10MB.
 const MAX_IMAGE_SIZE: usize = 10 * 1024 * 1024; // 10 MB for images
+/// The maximum file size for documents, set to 25MB.
 const MAX_DOCUMENT_SIZE: usize = 25 * 1024 * 1024; // 25 MB for documents
 
-// MIME type categories
+/// A struct that holds the allowed MIME types for different asset categories.
+/// It's like a bouncer for our files, only letting the cool kids in.
 struct AllowedMimeTypes {
+    /// A list of allowed image MIME types.
     pub image: &'static [&'static str],
+    /// A list of allowed video MIME types.
     pub video: &'static [&'static str],
+    /// A list of allowed document MIME types.
     pub document: &'static [&'static str],
+    /// A list of allowed archive MIME types.
     pub archive: &'static [&'static str],
 }
 
+/// A constant that holds the allowed MIME types for different asset categories.
+/// This is where we define what files are allowed to be uploaded.
 const ALLOWED_MIME_TYPES: AllowedMimeTypes = AllowedMimeTypes {
     image: &[
         "image/jpeg",
@@ -77,15 +94,30 @@ const ALLOWED_MIME_TYPES: AllowedMimeTypes = AllowedMimeTypes {
     ],
 };
 
+/// An enum that represents the different categories of assets.
+/// It's like a filing cabinet for our files, keeping everything organized.
 #[derive(Debug, Clone)]
 enum AssetCategory {
+    /// The image asset category.
     Image,
+    /// The video asset category.
     Video,
+    /// The document asset category.
     Document,
+    /// The archive asset category.
     Archive,
 }
 
 impl AssetCategory {
+    /// Creates an `AssetCategory` from a MIME type.
+    ///
+    /// # Arguments
+    ///
+    /// * `mime_type` - The MIME type to convert.
+    ///
+    /// # Returns
+    ///
+    /// An `Option` containing the `AssetCategory` if the MIME type is supported, or `None` otherwise.
     fn from_mime_type(mime_type: &str) -> Option<Self> {
         if ALLOWED_MIME_TYPES.image.contains(&mime_type) {
             Some(AssetCategory::Image)
@@ -100,6 +132,11 @@ impl AssetCategory {
         }
     }
 
+    /// Gets the maximum file size for the asset category.
+    ///
+    /// # Returns
+    ///
+    /// The maximum file size in bytes.
     fn get_max_size(&self) -> usize {
         match self {
             AssetCategory::Image => MAX_IMAGE_SIZE,
@@ -110,6 +147,15 @@ impl AssetCategory {
     }
 }
 
+/// Checks if a MIME type is allowed.
+///
+/// # Arguments
+///
+/// * `mime_type` - The MIME type to check.
+///
+/// # Returns
+///
+/// `true` if the MIME type is allowed, `false` otherwise.
 fn is_mime_type_allowed(mime_type: &str) -> bool {
     ALLOWED_MIME_TYPES.image.contains(&mime_type)
         || ALLOWED_MIME_TYPES.video.contains(&mime_type)
@@ -117,6 +163,16 @@ fn is_mime_type_allowed(mime_type: &str) -> bool {
         || ALLOWED_MIME_TYPES.archive.contains(&mime_type)
 }
 
+/// Generates a Markdown string for an asset.
+///
+/// # Arguments
+///
+/// * `asset` - The asset to generate the Markdown for.
+/// * `asset_url` - The URL of the asset.
+///
+/// # Returns
+///
+/// A Markdown string that represents the asset.
 fn generate_markdown_for_asset(asset: &DocAsset, asset_url: &str) -> String {
     let category = AssetCategory::from_mime_type(&asset.mime_type);
     let alt_text = std::path::Path::new(&asset.original_name)
@@ -130,7 +186,11 @@ fn generate_markdown_for_asset(asset: &DocAsset, asset_url: &str) -> String {
         }
         Some(AssetCategory::Video) => {
             format!(
-                r#"<video controls width=\"100%\" style=\"max-width: 800px;\">\n  <source src=\"{}\" type=\"{}\">\n  Your browser does not support the video tag.\n  <a href=\"{}\">{}</a>\n</video>"#,
+                r#"<video controls width="100%" style="max-width: 800px;">
+  <source src="{}" type="{}">
+  Your browser does not support the video tag.
+  <a href="{}">{}</a>
+</video>"#,
                 asset_url, asset.mime_type, asset_url, asset.original_name
             )
         }
@@ -143,6 +203,17 @@ fn generate_markdown_for_asset(asset: &DocAsset, asset_url: &str) -> String {
     }
 }
 
+/// Uploads an asset for a document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `req` - The HTTP request.
+/// * `payload` - The multipart payload containing the file.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn upload_asset(
     pool: web::Data<DbPool>,
     req: HttpRequest,
@@ -286,6 +357,16 @@ pub async fn upload_asset(
     }
 }
 
+/// Lists all assets for a document.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `req` - The HTTP request.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn list_assets(pool: web::Data<DbPool>, req: HttpRequest) -> AppResult<HttpResponse> {
     let user_info = extract_user_from_request(&req)?;
     let doc_id_str = req
@@ -377,6 +458,15 @@ pub async fn list_assets(pool: web::Data<DbPool>, req: HttpRequest) -> AppResult
     Ok(HttpResponse::Ok().json(response))
 }
 
+/// Serves an asset file.
+///
+/// # Arguments
+///
+/// * `path` - The path to the asset file.
+///
+/// # Returns
+///
+/// An `AppResult` containing the `NamedFile`.
 pub async fn serve_asset(path: web::Path<(String, String)>) -> AppResult<NamedFile> {
     let (doc_id_str, filename) = path.into_inner();
 
@@ -395,6 +485,17 @@ pub async fn serve_asset(path: web::Path<(String, String)>) -> AppResult<NamedFi
     Ok(file)
 }
 
+/// Deletes an asset.
+///
+/// # Arguments
+///
+/// * `pool` - The database pool.
+/// * `req` - The HTTP request.
+/// * `path` - The path to the asset to delete.
+///
+/// # Returns
+///
+/// An `AppResult` containing the HTTP response.
 pub async fn delete_asset(
     pool: web::Data<DbPool>,
     req: HttpRequest,
