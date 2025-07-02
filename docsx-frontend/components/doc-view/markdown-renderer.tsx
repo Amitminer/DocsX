@@ -1,3 +1,11 @@
+/**
+ * @file markdown-renderer.tsx
+ * @description This component renders Markdown content using `react-markdown` with custom styling and handling for various elements.
+ * It supports GitHub Flavored Markdown, raw HTML, and includes custom rendering for code blocks, headings, tables, links, and images/videos.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import ReactMarkdown from "react-markdown"
@@ -5,13 +13,33 @@ import remarkGfm from "remark-gfm"
 import rehypeRaw from "rehype-raw"
 import { Copy, Archive, FileText, Download } from "lucide-react"
 import { config } from "@/lib/config"
+import CustomVideoPlayer from "./CustomVideoPlayer"
+import React from "react"
 
+/**
+ * Props for the `MarkdownRenderer` component.
+ */
 interface MarkdownRendererProps {
+	/** The Markdown content to be rendered. */
 	content: string
+	/** The unique identifier of the document, used for resolving asset URLs. */
 	docId: string;
 }
 
+/**
+ * Renders Markdown content with custom components and styling.
+ * It provides enhanced rendering for code blocks (with copy functionality and language labels),
+ * headings, tables, blockquotes, and intelligent handling of internal asset links (images, videos, files).
+ *
+ * @param {MarkdownRendererProps} { content, docId } - The props for the component.
+ * @returns {JSX.Element} The rendered Markdown content.
+ */
 export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
+	/**
+	 * Determines the appropriate file icon based on the file extension in the given href.
+	 * @param {string} href - The URL or path of the file.
+	 * @returns {JSX.Element} The Lucide icon component for the file type.
+	 */
 	const getFileIcon = (href: string) => {
 		if (/\.(zip|tar|gz|rar)$/i.test(href)) return <Archive className="inline w-4 h-4 mr-1 text-yellow-400 align-text-bottom" />;
 		if (/\.(pdf|docx?|txt)$/i.test(href)) return <FileText className="inline w-4 h-4 mr-1 text-red-400 align-text-bottom" />;
@@ -21,15 +49,17 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 	return (
 		<div className="prose prose-invert prose-purple max-w-none prose-lg">
 			<ReactMarkdown
-				remarkPlugins={[remarkGfm]}
-				rehypePlugins={[rehypeRaw]}
+				remarkPlugins={[remarkGfm]} // Enables GitHub Flavored Markdown
+				rehypePlugins={[rehypeRaw]} // Allows rendering raw HTML within Markdown
 				components={{
+					/** Custom renderer for `code` blocks (both inline and fenced). */
 					code(props) {
 						const { children, className, ...rest } = props
 						const match = /language-(\w+)/.exec(className || "")
 						const language = match ? match[1] : ""
 						const isInline = !match
 
+						// Render inline code with specific styling
 						if (isInline) {
 							return (
 								<code
@@ -41,6 +71,7 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 							)
 						}
 
+						// Render fenced code blocks with language label, copy button, and custom highlighting
 						const codeString = String(children).replace(/\n$/, "")
 
 						return (
@@ -76,7 +107,7 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 											try {
 												await navigator.clipboard.writeText(codeString)
 											} catch (err) {
-												console.error("Failed to copy code:", err)
+\t											console.error("Failed to copy code:", err)
 											}
 										}}
 										className="flex items-center gap-2 bg-gradient-to-r from-gray-800/95 to-gray-700/95 hover:from-gray-700/95 hover:to-gray-600/95 text-gray-300 hover:text-white px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm transition-all duration-200 backdrop-blur-sm border border-gray-600/40 shadow-lg hover:shadow-xl hover:scale-105"
@@ -127,38 +158,46 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 							</div>
 						)
 					},
+					/** Custom renderer for `h1` (level 1 heading). */
 					h1: ({ children }) => (
 						<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-white via-gray-100 to-gray-300 bg-clip-text text-transparent mt-8 sm:mt-12 mb-4 sm:mb-6 first:mt-0 border-b border-b-purple-500/50 pb-3">
 							{children}
 						</h1>
 					),
+					/** Custom renderer for `h2` (level 2 heading). */
 					h2: ({ children }) => (
 						<h2 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent mt-6 sm:mt-8 mb-3 sm:mb-4 border-b border-gray-700/50 pb-2">
 							{children}
 						</h2>
 					),
+					/** Custom renderer for `h3` (level 3 heading). */
 					h3: ({ children }) => (
 						<h3 className="text-lg sm:text-xl lg:text-2xl font-semibold text-white mt-5 sm:mt-6 mb-2 sm:mb-3">
 							{children}
 						</h3>
 					),
+					/** Custom renderer for `h4` (level 4 heading). */
 					h4: ({ children }) => (
 						<h4 className="text-base sm:text-lg lg:text-xl font-semibold text-white mt-4 sm:mt-5 mb-2 sm:mb-3">
 							{children}
 						</h4>
 					),
+					/** Custom renderer for `h5` (level 5 heading). */
 					h5: ({ children }) => (
 						<h5 className="text-sm sm:text-base lg:text-lg font-semibold text-white mt-3 sm:mt-4 mb-2">{children}</h5>
 					),
+					/** Custom renderer for `h6` (level 6 heading). */
 					h6: ({ children }) => (
 						<h6 className="text-xs sm:text-sm lg:text-base font-semibold text-white mt-3 mb-2">{children}</h6>
 					),
+					/** Custom renderer for `blockquote`. */
 					blockquote: ({ children }) => (
 						<blockquote className="relative border-l-4 border-gradient-to-b fro pl-6 my-6 italic text-gray-300 bg-gradient-to-r from-gray-800/30 to-transparent py-4 rounded-r-xl">
 							<div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-purple-500 to-blue-500 rounded-full"></div>
 							{children}
 						</blockquote>
 					),
+					/** Custom renderer for `table`. */
 					table: ({ children }) => (
 						<div className="overflow-x-auto my-6 sm:my-8 -mx-4 sm:mx-0 rounded-2xl border border-gray-700/50 shadow-xl">
 							<table className="w-full border-collapse bg-gradient-to-br from-gray-900/50 to-slate-900/50 backdrop-blur-sm">
@@ -166,18 +205,22 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 							</table>
 						</div>
 					),
+					/** Custom renderer for `th` (table header). */
 					th: ({ children }) => (
 						<th className="border-b border-gray-700/50 px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-gray-800/80 to-gray-700/80 font-bold text-white text-left text-sm sm:text-base">
 							{children}
 						</th>
 					),
+					/** Custom renderer for `td` (table data). */
 					td: ({ children }) => (
 						<td className="border-b border-gray-800/30 px-4 py-3 sm:px-6 sm:py-4 text-gray-300 text-sm sm:text-base">
 							{children}
 						</td>
 					),
+					/** Custom renderer for `a` (links). */
 					a: ({ href, children }) => {
 						let finalHref = href || "";
+						// Resolve internal asset paths to full API URLs
 						if (typeof finalHref === "string" && docId) {
 							if (finalHref.startsWith("/docs/")) {
 								// Convert /docs/{docId}/{filename} to /assets/{docId}/{filename}
@@ -198,15 +241,17 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 								className="text-purple-400 hover:text-purple-300 underline decoration-purple-500/50 hover:decoration-purple-400 underline-offset-2 transition-all duration-200 break-words font-medium"
 								target={finalHref.startsWith("http") ? "_blank" : undefined}
 								rel={finalHref.startsWith("http") ? "noopener noreferrer" : undefined}
-								download={!finalHref.startsWith("http") && !isImage}
+								download={!finalHref.startsWith("http") && !isImage} // Suggest download for non-image internal links
 							>
-								{!isImage && getFileIcon(finalHref)}
+								{!isImage && getFileIcon(finalHref)} {/* Show file icon for non-image links */}
 								{children}
 							</a>
 						);
 					},
+					/** Custom renderer for `img` (images). */
 					img: ({ src, alt }) => {
 						let finalSrc = (typeof src === 'string' ? src : '') || "/placeholder.svg";
+						// Resolve internal asset paths to full API URLs
 						if (docId) {
 							if (finalSrc.startsWith('/docs/')) {
 								const parts = finalSrc.split("/");
@@ -219,16 +264,9 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 							}
 						}
 						const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(finalSrc);
+						// If the source is a video, render the CustomVideoPlayer component
 						if (isVideo) {
-							return (
-								<video
-									src={finalSrc}
-									controls
-									style={{ maxWidth: '100%', borderRadius: '1rem', margin: '1.5rem 0' }}
-								>
-									{alt || "Your browser does not support the video tag."}
-								</video>
-							);
+							return <CustomVideoPlayer src={finalSrc} alt={alt} />;
 						}
 						return (
 							/* eslint-disable @next/next/no-img-element */
@@ -240,31 +278,50 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 							/>
 						);
 					},
+					/** Custom renderer for `ul` (unordered lists). */
 					ul: ({ children }) => (
 						<ul className="list-none my-4 sm:my-6 space-y-2 text-gray-300 text-base sm:text-lg">{children}</ul>
 					),
+					/** Custom renderer for `ol` (ordered lists). */
 					ol: ({ children }) => (
 						<ol className="list-none my-4 sm:my-6 space-y-2 text-gray-300 text-base sm:text-lg counter-reset-list">
 							{children}
 						</ol>
 					),
+					/** Custom renderer for `li` (list items). */
 					li: ({ children }) => (
 						<li className="text-gray-300 leading-relaxed flex items-start gap-3">
 							<div className="w-2 h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full mt-2.5 flex-shrink-0"></div>
 							<div className="flex-1">{children}</div>
 						</li>
 					),
-					p: ({ children }) => (
-						<p className="text-gray-300 leading-relaxed mb-4 sm:mb-6 text-base sm:text-lg">{children}</p>
-					),
+					/** Custom renderer for `p` (paragraphs). */
+					p: ({ children }) => {
+						// If any child is a block element, use div instead of p to avoid invalid HTML nesting
+						const hasBlock = React.Children.toArray(children).some(
+							(child: any) =>
+								React.isValidElement(child) &&
+								typeof child.type === 'string' &&
+								['div', 'video', 'table', 'ul', 'ol', 'pre'].includes(child.type)
+						);
+						const Wrapper = hasBlock ? 'div' : 'p';
+						return (
+							<Wrapper className="text-gray-300 leading-relaxed mb-4 sm:mb-6 text-base sm:text-lg">
+								{children}
+							</Wrapper>
+						);
+					},
+					/** Custom renderer for `hr` (horizontal rule). */
 					hr: () => (
 						<hr className="border-0 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent my-8 sm:my-12" />
 					),
+					/** Custom renderer for `strong` (bold text). */
 					strong: ({ children }) => (
 						<strong className="font-bold bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
 							{children}
 						</strong>
 					),
+					/** Custom renderer for `em` (emphasized text). */
 					em: ({ children }) => <em className="italic text-gray-300 font-medium">{children}</em>,
 				}}
 			>

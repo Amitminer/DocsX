@@ -1,3 +1,12 @@
+/**
+ * @file DocsGrid.tsx
+ * @description This component displays a grid of document cards.
+ * It handles infinite scrolling to load more documents as the user scrolls down.
+ * It also integrates AI summarization functionality for each document card.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import DocCard from "./doc-card"
 import { formatDate } from "@/lib/utils"
 import type { Doc } from "@/components/types/doc-view"
@@ -5,23 +14,48 @@ import { useRef, useEffect } from "react"
 import { RefreshCw } from "lucide-react"
 import { Transition } from "@headlessui/react"
 
+/**
+ * Props for the `DocsGrid` component.
+ */
 interface DocsGridProps {
+  /** An array of document objects to display. */
   docs: Doc[]
+  /** Indicates if author profile pictures have been loaded. */
   pfpLoaded: boolean
+  /** A record mapping author IDs to their image URLs. */
   authorImages: Record<string, string | undefined>
+  /** The ID of the document for which a summary is currently active. */
   activeSummaryDocId: string | null
+  /** Indicates if the summary modal is currently shown. */
   showSummary: boolean
+  /** Indicates if an AI summary is currently being generated. */
   isGeneratingSummary: boolean
+  /** Function to trigger AI summarization for a document. */
   handleSummarize: (title: string, content: string) => Promise<void>
+  /** Function to control the visibility of the summary modal. */
   setShowSummary: (show: boolean) => void
+  /** Function to set the active summary document ID. */
   setActiveSummaryDocId: (id: string | null) => void
+  /** Function to set the summary content. */
   setSummary: (summary: string | null) => void
+  /** Indicates if there are more documents to load. */
   hasMore: boolean
+  /** Function to load more documents. */
   loadMore: () => void
+  /** Indicates if more documents are currently being loaded. */
   loadingMore: boolean
+  /** Optional callback function when a tag is clicked. */
   onTagClick?: (tag: string) => void
 }
 
+/**
+ * `DocsGrid` component displays documents in a responsive grid layout.
+ * It supports infinite scrolling to load more documents as the user reaches the end of the current list.
+ * Each document is rendered using `DocCard`, and AI summarization is integrated for individual documents.
+ *
+ * @param {DocsGridProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered document grid.
+ */
 export default function DocsGrid({
   docs,
   pfpLoaded,
@@ -38,8 +72,13 @@ export default function DocsGrid({
   loadingMore,
   onTagClick,
 }: DocsGridProps) {
+  /** @type {React.RefObject<HTMLDivElement>} Ref for the sentinel element used for infinite scrolling. */
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  /**
+   * Effect hook for implementing infinite scrolling.
+   * Observes the `sentinelRef` and calls `loadMore` when it intersects the viewport.
+   */
   useEffect(() => {
     if (!hasMore) return;
     const observer = new window.IntersectionObserver(
@@ -124,4 +163,4 @@ export default function DocsGrid({
       </Transition>
     </div>
   )
-} 
+}

@@ -1,15 +1,51 @@
+/**
+ * @file FilterDropdown.tsx
+ * @description This component provides a dropdown menu for filtering documents based on tags, author, and upload date.
+ * It allows users to refine their search results with various criteria.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { useState } from "react"
 import { Filter, ChevronDown, Tag, User, Calendar } from "lucide-react"
 
+/**
+ * Predefined suggestions for tags to be used in filtering.
+ */
 const TAG_SUGGESTIONS = ["api", "rust", "backend", "frontend", "docs", "search", "auth"]
 
-export default function FilterDropdown({ onApply }: { onApply: (params: { author?: string; tags?: string[]; date?: string; sort?: string }) => void }) {
+/**
+ * Props for the `FilterDropdown` component.
+ */
+interface FilterDropdownProps {
+  /** Callback function to apply the selected filter parameters. */
+  onApply: (params: { author?: string; tags?: string[]; date?: string; sort?: string }) => void
+}
+
+/**
+ * `FilterDropdown` component allows users to filter documents.
+ * It provides input fields and tag suggestions for filtering by author, tags, and upload date.
+ *
+ * @param {FilterDropdownProps} { onApply } - The props for the component.
+ * @returns {JSX.Element} The rendered FilterDropdown component.
+ */
+export default function FilterDropdown({ onApply }: FilterDropdownProps) {
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to control the visibility of the dropdown content. */
 	const [show, setShow] = useState(false)
+	/** @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]} State to store the selected filter tags. */
 	const [filterTags, setFilterTags] = useState<string[]>([])
+	/** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State to store the filter author input. */
 	const [filterAuthor, setFilterAuthor] = useState("")
+	/** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State to store the filter date input. */
 	const [filterDate, setFilterDate] = useState("")
+	/** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State to store the filter sort (currently unused in this component). */
 	const [filterSort] = useState("")
 
+	/**
+	 * Handles the application of filters.
+	 * Gathers the current filter states and calls the `onApply` callback with the selected parameters.
+	 * Closes the dropdown after applying filters.
+	 */	
 	const handleApply = () => {
 		onApply({
 			tags: filterTags.length > 0 ? filterTags : undefined,
@@ -77,4 +113,4 @@ export default function FilterDropdown({ onApply }: { onApply: (params: { author
 			)}
 		</div>
 	)
-} 
+}

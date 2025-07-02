@@ -1,12 +1,32 @@
+/**
+ * @file share-toast.tsx
+ * @description This component displays a transient toast notification indicating that a link has been copied to the clipboard.
+ * It provides visual feedback to the user after a successful copy action.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { Link } from "lucide-react"
 
+/**
+ * Props for the `ShareToast` component.
+ */
 interface ShareToastProps {
+	/** Controls the visibility of the toast notification. */
 	show: boolean
 }
 
+/**
+ * `ShareToast` component displays a small, temporary notification to the user.
+ * It is typically used to confirm that a link or other content has been successfully copied to the clipboard.
+ *
+ * @param {ShareToastProps} { show } - The props for the component.
+ * @returns {JSX.Element | null} The rendered toast notification, or `null` if `show` is false.
+ */
 export function ShareToast({ show }: ShareToastProps) {
+	// Render null if the toast should not be shown.
 	if (!show) return null
 
 	return (

@@ -1,17 +1,44 @@
+/**
+ * @file code-block.tsx
+ * @description This component renders a code block with syntax highlighting, language labels, and a copy-to-clipboard button.
+ * It is designed to be used within Markdown content rendering.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState } from "react"
 import { Copy, Check } from 'lucide-react'
 
+/**
+ * Props for the `CodeBlock` component.
+ */
 interface CodeBlockProps {
+  /** The code content to be displayed. */
   children: string
+  /** Optional CSS class names to apply to the code block container. */
   className?: string
+  /** If true, renders the code as an inline code snippet without a block container or copy button. */
   inline?: boolean
 }
 
+/**
+ * `CodeBlock` component displays code snippets with enhanced features.
+ * It automatically extracts the language from `className` (e.g., `language-js`), provides a copy-to-clipboard button,
+ * and can render as either a block-level element or an inline snippet.
+ *
+ * @param {CodeBlockProps} { children, className, inline } - The props for the component.
+ * @returns {JSX.Element} The rendered code block.
+ */
 export default function CodeBlock({ children, className, inline }: CodeBlockProps) {
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the code has been copied to the clipboard. */
   const [copied, setCopied] = useState(false)
 
+  /**
+   * Handles copying the code content to the clipboard.
+   * Sets `copied` state to true temporarily and logs any errors.
+   */
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(children)
@@ -22,9 +49,13 @@ export default function CodeBlock({ children, className, inline }: CodeBlockProp
     }
   }
 
-  // Extract language from className (format: "language-python")
+  /**
+   * Extracts the language from the `className` prop.
+   * @type {string}
+   */
   const language = className?.replace("language-", "") || ""
 
+  // Render as inline code if `inline` prop is true.
   if (inline) {
     return <code className="bg-gray-800 px-2 py-1 rounded text-purple-300 text-sm font-mono">{children}</code>
   }

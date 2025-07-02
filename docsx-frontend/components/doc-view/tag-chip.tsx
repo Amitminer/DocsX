@@ -1,16 +1,40 @@
+/**
+ * @file tag-chip.tsx
+ * @description This component renders a single tag as a clickable or removable chip.
+ * It provides visual styling for tags and optional interaction capabilities.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { X } from "lucide-react"
 
+/**
+ * Props for the `TagChip` component.
+ */
 interface TagChipProps {
+	/** The text content of the tag. */
 	tag: string
+	/** Optional click handler for the tag. */
 	onClick?: () => void
+	/** Optional remove handler for the tag (displays an 'X' button). */
 	onRemove?: () => void
+	/** If true, the tag will be styled as clickable and `onClick` will be enabled. */
 	clickable?: boolean
+	/** If true, the tag will display a remove button and `onRemove` will be enabled. */
 	removable?: boolean
+	/** Optional CSS class names to apply to the tag chip. */
 	className?: string
 }
 
+/**
+ * `TagChip` component displays an individual tag with optional interactive features.
+ * It can be configured to be clickable (e.g., for filtering) or removable (e.g., in a form).
+ *
+ * @param {TagChipProps} { tag, onClick, onRemove, clickable, removable, className } - The props for the component.
+ * @returns {JSX.Element} The rendered tag chip.
+ */
 export function TagChip({ tag, onClick, onRemove, clickable = false, removable = false, className = "" }: TagChipProps) {
 	return (
 		<div
@@ -39,4 +63,4 @@ export function TagChip({ tag, onClick, onRemove, clickable = false, removable =
 			)}
 		</div>
 	)
-} 
+}

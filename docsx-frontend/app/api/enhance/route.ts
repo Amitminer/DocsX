@@ -1,8 +1,23 @@
+/**
+ * @file route.ts
+ * @description This module defines the API route for enhancing document content using AI.
+ * It leverages the Google Gemini model via the Vercel AI SDK to improve the quality of Markdown content.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { type NextRequest, NextResponse } from "next/server"
 import { ApiError } from '@/lib/utils';
 
+/**
+ * Handles POST requests for content enhancement.
+ * It takes Markdown content as input and returns an AI-enhanced version of it.
+ *
+ * @param {NextRequest} request - The incoming Next.js request object, containing the content to be enhanced in its body.
+ * @returns {NextResponse} A Next.js response object containing the enhanced content or an error message.
+ */
 export async function POST(request: NextRequest) {
 	try {
 		const { content } = await request.json()
@@ -24,7 +39,7 @@ export async function POST(request: NextRequest) {
 
 		const response = await generateText({
 			model: google('gemini-2.0-flash'),
-			prompt: `Improve the grammar, formatting, and clarity of this markdown content (don't include the \`\`\`markdown\`\`\` ). Make it more professional and easy to read while preserving all the technical information and structure. Return only the improved markdown content without any explanations.
+			prompt: `Improve the grammar, formatting, and clarity of this markdown content (don't include the ```markdown``` ). Make it more professional and easy to read while preserving all the technical information and structure. Return only the improved markdown content without any explanations.
 
 Content to enhance:
 ${truncatedContent}`,
@@ -33,7 +48,7 @@ ${truncatedContent}`,
 		});
 		const enhancedContent = response.text;
 
-		if (!enhancedContent) {
+			if (!enhancedContent) {
 			console.error("No enhanced content generated")
 			return NextResponse.json({ error: "No enhanced content generated" }, { status: 500 })
 		}
@@ -57,4 +72,4 @@ ${truncatedContent}`,
 			error: error instanceof Error ? error.message : "Failed to enhance content"
 		}, { status: 500 })
 	}
-} 
+}

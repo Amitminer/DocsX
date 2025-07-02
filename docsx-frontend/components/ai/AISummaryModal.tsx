@@ -1,13 +1,36 @@
+/**
+ * @file AISummaryModal.tsx
+ * @description This component provides a modal dialog to display AI-generated summaries.
+ * It shows a loading state while the summary is being generated and then displays the summary content.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"
 import { Sparkles, X } from "lucide-react"
 
+/**
+ * Props for the `AISummaryModal` component.
+ */
 interface AISummaryModalProps {
+	/** Controls the open/closed state of the modal. */
 	open: boolean
+	/** Callback function to change the open state of the modal. */
 	onOpenChange: (open: boolean) => void
+	/** Indicates if the AI summary is currently being generated. */
 	isGeneratingSummary: boolean
+	/** The AI-generated summary text, or `null` if not yet available. */
 	summary: string | null
 }
 
+/**
+ * `AISummaryModal` component displays an AI-generated summary in a modal dialog.
+ * It features a dynamic loading animation while the summary is being generated
+ * and a clear, scrollable display for the summary text once available.
+ *
+ * @param {AISummaryModalProps} { open, onOpenChange, isGeneratingSummary, summary } - The props for the component.
+ * @returns {JSX.Element} The rendered AI summary modal.
+ */
 export default function AISummaryModal({ open, onOpenChange, isGeneratingSummary, summary }: AISummaryModalProps) {
 	return (
 		<Dialog open={open} onClose={() => onOpenChange(false)} className="relative z-50">

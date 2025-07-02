@@ -1,11 +1,26 @@
+/**
+ * @file route.ts
+ * @description This module defines the API route for fetching Clerk user data, specifically profile image URLs.
+ * It supports fetching data for single users or in batches.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { ApiError } from '@/lib/utils';
 
+/**
+ * Handles GET requests to fetch Clerk user data.
+ * It can fetch the profile image URL for a single user by `userId` or for multiple users by `userIds` (comma-separated).
+ *
+ * @param {NextRequest} req - The incoming Next.js request object, containing `userId` or `userIds` as search parameters.
+ * @returns {NextResponse} A Next.js response object containing the user's image URL(s) or an error message.
+ */
 export async function GET(req: NextRequest) {
   const userIdsParam = req.nextUrl.searchParams.get('userIds');
   const userId = req.nextUrl.searchParams.get('userId');
 
-  // Batch mode
+  // Batch mode: Fetch image URLs for multiple user IDs.
   if (userIdsParam) {
     const userIds = userIdsParam.split(',').map(id => id.trim()).filter(Boolean);
     const results: Record<string, string | null> = {};
@@ -33,7 +48,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(results);
   }
 
-  // Single user fallback
+  // Single user fallback: Fetch image URL for a single user ID.
   if (!userId) return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
 
   const res = await fetch(`https://api.clerk.dev/v1/users/${userId}`, {

@@ -1,8 +1,24 @@
+/**
+ * @file route.ts
+ * @description This module defines the API route for handling AI chat interactions.
+ * It uses the Google Gemini model via the Vercel AI SDK to generate responses based on document content.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { NextRequest, NextResponse } from "next/server"
 import { ApiError } from '@/lib/utils';
 
+/**
+ * Handles POST requests for AI chat interactions.
+ * This function takes a user's question, document title, and document content,
+ * and uses the Google Gemini model to generate a relevant answer.
+ *
+ * @param {NextRequest} request - The incoming Next.js request object, containing the question, document title, and content in its body.
+ * @returns {NextResponse} A Next.js response object containing the AI-generated answer or an error message.
+ */
 export async function POST(request: NextRequest) {
 	try {
 		const { question, docTitle, docContent } = await request.json()
@@ -61,4 +77,4 @@ Please provide a helpful, accurate answer based on the document content. If the 
 			error: error instanceof Error ? error.message : "Failed to process your question"
 		}, { status: 500 })
 	}
-} 
+}

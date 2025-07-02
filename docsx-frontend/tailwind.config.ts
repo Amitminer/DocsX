@@ -1,5 +1,18 @@
+/**
+ * @file tailwind.config.ts
+ * @description This file configures the Tailwind CSS framework for the DocsX frontend application.
+ * It defines custom theme settings, including colors, fonts, border radii, and animations.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import type { Config } from "tailwindcss"
 
+/**
+ * The main Tailwind CSS configuration object.
+ * This object extends the default Tailwind theme with custom settings
+ * relevant to the DocsX application's design system.
+ */
 const config: Config = {
   darkMode: "class",
   content: [

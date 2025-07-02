@@ -1,3 +1,12 @@
+/**
+ * @file page.tsx
+ * @description This page allows users to edit existing documentation entries.
+ * It fetches the document data, pre-fills the `DocForm`, and handles the update submission to the backend API.
+ * It also manages loading states, errors, and user permissions.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
@@ -11,17 +20,39 @@ import type { Doc } from "@/components/types/doc-view"
 import { Button } from "@/components/ui/button"
 import { config } from "@/lib/config"
 
+/**
+ * `EditPage` component provides the interface for editing existing documentation.
+ * It fetches the document based on the slug from the URL, pre-populates the `DocForm`,
+ * and handles the submission of updated document data to the backend.
+ * It also includes robust error handling and permission checks.
+ *
+ * @returns {JSX.Element} The rendered edit document page.
+ */
 export default function EditPage() {
+	/** @type {ReturnType<typeof useParams>} Next.js hook to access route parameters. */
 	const params = useParams()
+	/** @type {ReturnType<typeof useRouter>} Next.js router instance for navigation. */
 	const router = useRouter()
+	/** @type {ReturnType<typeof useAuth>["getToken"]} Function to get the authentication token from Clerk. */
 	const { getToken } = useAuth()
+	/** @type {ReturnType<typeof useUser>["user"]} Current authenticated user from Clerk. */
 	const { user } = useUser()
+	/** @type {[Doc | null, React.Dispatch<React.SetStateAction<Doc | null>>]} State to store the fetched document data. */
 	const [doc, setDoc] = useState<Doc | null>(null)
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the document is currently loading. */
 	const [loading, setLoading] = useState(true)
+	/** @type {[string | null, React.Dispatch<React.SetStateAction<string | null>>]} State to store any error messages during document fetching. */
 	const [error, setError] = useState<string | null>(null)
+	/** @type {[string | null, React.Dispatch<React.SetStateAction<string | null>>]} State to store any error messages during form submission. */
 	const [submitError, setSubmitError] = useState<string | null>(null)
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the form is currently submitting. */
 	const [isSubmitting, setIsSubmitting] = useState(false)
 
+	/**
+	 * Fetches the document data from the backend API based on the slug.
+	 * Handles authentication and various error scenarios, including not found, forbidden, and unauthorized.
+	 * Also checks if the current user is the author of the document.
+	 */
 	const fetchDoc = useCallback(async () => {
 		try {
 			setLoading(true)
@@ -66,6 +97,9 @@ export default function EditPage() {
 	}, [getToken, params.slug, user])
 
 
+	/**
+	 * Effect hook to fetch the document when the component mounts or when `params.slug` or `user` changes.
+	 */
 	useEffect(() => {
 		if (params.slug) {
 			fetchDoc()
@@ -73,6 +107,16 @@ export default function EditPage() {
 	}, [params.slug, user, fetchDoc])
 
 
+	/**
+	 * Handles the submission of the document update form.
+	 * Sends a POST request to the backend API to update the document.
+	 * @param {object} data - The updated document data from the form.
+	 * @param {string} data.title - The title of the document.
+	 * @param {string} data.description - The description of the document.
+	 * @param {string} data.content - The content of the document.
+	 * @param {string[]} [data.tags] - An array of tags for the document.
+	 * @throws {Error} If authentication token is missing, required fields are empty, or API request fails.
+	 */
 	const handleSubmit = async (data: { title: string; description: string; content: string; imageUrl?: string; videoUrl?: string; tags?: string[] }) => {
 		if (!doc) return
 
@@ -126,6 +170,10 @@ export default function EditPage() {
 		}
 	}
 
+	/**
+	 * Handles the cancellation of the form.
+	 * Redirects the user back to the document view page or home page if the document is not found.
+	 */
 	const handleCancel = () => {
 		if (doc) {
 			router.push(`/docs/${doc.id}`)
@@ -134,6 +182,7 @@ export default function EditPage() {
 		}
 	}
 
+	// Renders a loading state while the document is being fetched.
 	if (loading) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950">
@@ -183,6 +232,7 @@ export default function EditPage() {
 		)
 	}
 
+	// Renders an error message if the document is not found or the user does not have permission.
 	if (error || !doc) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950">

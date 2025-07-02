@@ -1,3 +1,11 @@
+/**
+ * @file UserButton.tsx
+ * @description This component displays a user button that, when clicked, reveals a dropdown menu with options
+ * to view user settings or sign out. It dynamically displays the user's profile picture or initials.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState, useRef } from "react"
@@ -6,19 +14,39 @@ import { Settings, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useClickAway } from "react-use"
 
+/**
+ * `UserButton` component displays a user's profile picture or initials and provides a dropdown menu
+ * for accessing user settings and signing out. It integrates with Clerk for user management.
+ *
+ * @returns {JSX.Element | null} The rendered user button, or `null` if no user is signed in.
+ */
 export default function UserButton() {
+  /** @type {ReturnType<typeof useUser>["user"]} The current authenticated user object from Clerk. */
   const { user } = useUser()
+  /** @type {ReturnType<typeof useClerk>} Clerk instance for sign-out and user profile actions. */
   const { signOut, openUserProfile } = useClerk()
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to control the open/closed state of the dropdown menu. */
   const [isOpen, setIsOpen] = useState(false)
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the sign-out process is in progress. */
   const [isSigningOut, setIsSigningOut] = useState(false)
+  /** @type {React.RefObject<HTMLDivElement>} Ref for the dropdown container to detect clicks outside. */
   const dropdownRef = useRef<HTMLDivElement>(null)
 
+  /**
+   * Hook to close the dropdown when a click occurs outside of it.
+   */
   useClickAway(dropdownRef, () => {
     if (isOpen) setIsOpen(false)
   })
 
+  // Render null if no user is signed in.
   if (!user) return null
 
+  /**
+   * Handles the sign-out process.
+   * Sets `isSigningOut` to true, closes the dropdown, and attempts to sign out the user.
+   * Redirects to the home page upon successful sign-out or error.
+   */
   const handleSignOut = async () => {
     if (isSigningOut) return
     setIsSigningOut(true)
@@ -33,19 +61,39 @@ export default function UserButton() {
     }
   }
 
+  /**
+   * Handles the click on the profile settings option.
+   * Closes the dropdown and opens the Clerk user profile interface.
+   */
   const handleProfileClick = () => {
     setIsOpen(false)
     openUserProfile()
   }
 
+  /**
+   * Generates user initials from first and last name, or email if names are not available.
+   * @type {string}
+   */
   const userInitials = user.firstName && user.lastName 
     ? `${user.firstName[0]}${user.lastName[0]}`
     : user.emailAddresses[0]?.emailAddress?.[0]?.toUpperCase() || "U"
 
+  /**
+   * The URL of the user's profile image.
+   * @type {string}
+   */
   const userImage = user.imageUrl
+  /**
+   * The display name for the user, preferring full name over username if available.
+   * @type {string}
+   */
   const userDisplayName = user.fullName && user.fullName !== user.username
     ? user.fullName
     : `@${user.username}`;
+  /**
+   * The username of the user.
+   * @type {string | null}
+   */
   const userUsername = user.username;
 
   return (
@@ -124,4 +172,4 @@ export default function UserButton() {
       )}
     </div>
   )
-} 
+}

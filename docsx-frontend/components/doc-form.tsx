@@ -1,3 +1,12 @@
+/**
+ * @file doc-form.tsx
+ * @description This component provides a form for creating and editing documents.
+ * It includes fields for title, description, content (with Markdown preview and AI enhancement),
+ * and tags. It also supports asset uploads via drag-and-drop.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import type React from "react"
@@ -17,25 +26,42 @@ import { AnimatePresence, motion } from "framer-motion"
 import { config } from "@/lib/config"
 
 
+/**
+ * Props for the `DocForm` component.
+ */
 interface DocFormProps {
+	/** Initial data to pre-fill the form fields when editing. */
 	initialData?: {
+		/** The unique ID of the document (only present when editing). */
 		id?: string
+		/** The title of the document. */
 		title: string
+		/** The description of the document. */
 		description: string
+		/** The content of the document in Markdown format. */
 		content: string
+		/** An array of tags associated with the document. */
 		tags?: string[]
 	}
+	/** Callback function to be called when the form is submitted. */
 	onSubmit?: (data: {
+		/** The title of the document. */
 		title: string
+		/** The description of the document. */
 		description: string
+		/** The content of the document. */
 		content: string
+		/** An array of tags. */
 		tags?: string[]
 	}) => void
-	onCancel?: () => void
-	isEditing?: boolean
-	isSubmitting?: boolean
+	/** Callback function to be called when the form is cancelled. */	onCancel?: () => void
+	/** Indicates whether the form is in editing mode. */	isEditing?: boolean
+	/** Indicates whether the form is currently submitting. */	isSubmitting?: boolean
 }
 
+/**
+ * Predefined options for AI content enhancement.
+ */
 const ENHANCE_OPTIONS = [
 	"Summarize",
 	"Expand",
@@ -44,6 +70,14 @@ const ENHANCE_OPTIONS = [
 	"Improve clarity"
 ];
 
+/**
+ * `DocForm` component provides a comprehensive form for creating and editing documents.
+ * It features fields for title, description, and Markdown content, along with tag management.
+ * Integrated AI enhancement tools and drag-and-drop asset upload functionality streamline the content creation process.
+ *
+ * @param {DocFormProps} props - The props for the component.
+ * @returns {JSX.Element} The rendered document form.
+ */
 export default function DocForm({
 	initialData = {
 		title: "",
@@ -55,19 +89,37 @@ export default function DocForm({
 	onCancel,
 	isEditing = false,
 }: DocFormProps) {
+	/** @type {[typeof initialData, React.Dispatch<React.SetStateAction<typeof initialData>>]} State for managing form data. */
 	const [formData, setFormData] = useState(initialData)
+	/** @type {[string[], React.Dispatch<React.SetStateAction<string[]>>]} State for managing document tags. */
 	const [tags, setTags] = useState<string[]>(initialData.tags || [])
+	/** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the current tag input value. */
 	const [tagInput, setTagInput] = useState("")
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the form is currently submitting. */
 	const [isSubmitting, setIsSubmitting] = useState(false)
+	/** @type {ReturnType<typeof useEnhanceContent>} Hook for AI content enhancement functionality. */
 	const { enhanceContent, isEnhancing } = useEnhanceContent()
+	/** @type {ReturnType<typeof useAuth>["getToken"]} Function to get the authentication token. */
 	const { getToken } = useAuth()
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if an asset is currently uploading. */
 	const [isUploading, setIsUploading] = useState(false)
+	/** @type {React.RefObject<HTMLTextAreaElement>} Ref for the content textarea element. */
 	const contentRef = useRef<HTMLTextAreaElement>(null)
+	/** @type {ReturnType<typeof useDocAssets>} Hook for managing document assets. */
 	const { assets, loadingAssets, fetchAssets } = useDocAssets(initialData?.id, isEditing)
+	/** @type {[object, React.Dispatch<React.SetStateAction<object>>]} State for form validation errors. */
 	const [errors, setErrors] = useState<{ title?: string; description?: string; content?: string }>({})
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to control fullscreen mode for the content editor. */
 	const [isFullScreen, setIsFullScreen] = useState(false);
+	/** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the AI enhancement instruction. */
 	const [enhanceInstruction, setEnhanceInstruction] = useState("");
 
+	/**
+	 * Callback function for handling dropped files (asset uploads).
+	 * If no document ID exists (new document), it attempts to auto-save a draft first.
+	 * Uploads files to the backend and inserts Markdown links into the content.
+	 * @param {File[]} acceptedFiles - An array of files accepted by the dropzone.
+	 */
 	const onDrop = useCallback(async (acceptedFiles: File[]) => {
 		if (!acceptedFiles.length) return;
 
@@ -138,6 +190,7 @@ export default function DocForm({
 		}
 	}, [getToken, initialData?.id, onSubmit, formData.title, formData.description, formData.content, fetchAssets]);
 
+	/** @type {ReturnType<typeof useDropzone>} Dropzone hook for file uploads. */
 	const { getRootProps, getInputProps, isDragActive } = useDropzone({
 		onDrop,
 		disabled: isUploading,
@@ -153,6 +206,11 @@ export default function DocForm({
 		}
 	})
 
+	/**
+	 * Handles the form submission.
+	 * Performs client-side validation and calls the `onSubmit` prop if validation passes.
+	 * @param {React.FormEvent} e - The form event.
+	 */
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault()
 		setIsSubmitting(true)
@@ -173,14 +231,27 @@ export default function DocForm({
 		}
 	}
 
+	/**
+	 * Handles changes to form input fields (title, description).
+	 * @param {string} field - The name of the field being changed.
+	 * @param {string} value - The new value of the field.
+	 */
 	const handleChange = (field: string, value: string) => {
 		setFormData((prev) => ({ ...prev, [field]: value }))
 	}
 
+	/**
+	 * Handles changes to the content textarea.
+	 * @param {React.ChangeEvent<HTMLTextAreaElement>} e - The change event from the textarea.
+	 */
 	const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
 		setFormData(prev => ({ ...prev, content: e.target.value }))
 	}
 
+	/**
+	 * Adds a new tag to the list of tags.
+	 * Trims and converts the tag to lowercase, and only adds if it's not empty and not already present.
+	 */
 	const handleAddTag = () => {
 		const trimmedTag = tagInput.trim().toLowerCase()
 		if (trimmedTag && !tags.includes(trimmedTag)) {
@@ -189,10 +260,20 @@ export default function DocForm({
 		}
 	}
 
+	/**
+	 * Removes a tag from the list of tags.
+	 * @param {string} tagToRemove - The tag to be removed.
+
+	 */
 	const handleRemoveTag = (tagToRemove: string) => {
 		setTags(prev => prev.filter(tag => tag !== tagToRemove))
 	}
 
+	/**
+	 * Handles key down events in the tag input field.
+	 * Adds a tag on Enter, comma, or space key press.
+	 * @param {React.KeyboardEvent} e - The keyboard event.
+	 */
 	const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
 		if (e.key === "Enter") {
 			e.preventDefault()
@@ -203,6 +284,10 @@ export default function DocForm({
 		}
 	}
 
+	/**
+	 * Handles the AI content enhancement request.
+	 * Calls the `enhanceContent` hook with the current content and enhancement instruction.
+	 */
 	const handleEnhanceContent = async () => {
 		if (!formData.content.trim()) return;
 		try {
@@ -216,6 +301,10 @@ export default function DocForm({
 		}
 	}
 
+	/**
+	 * Effect hook to listen for a custom 'refresh-assets' event.
+	 * When triggered, it refetches the document assets.
+	 */
 	useEffect(() => {
 		const handler = () => {
 			if (typeof fetchAssets === "function") fetchAssets();
@@ -420,7 +509,7 @@ export default function DocForm({
 										</div>
 										{isUploading ? (
 											<div className="flex items-center gap-2">
-												<div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+												<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
 												<p className="text-purple-400 font-medium">Uploading...</p>
 											</div>
 										) : isDragActive ? (
@@ -435,7 +524,7 @@ export default function DocForm({
 														? "Images, PDFs, ZIP files up to 10MB each"
 														: "Save document first to enable file uploads"
 													}
-												</p>
+											</p>
 											</div>
 										)}
 									</div>

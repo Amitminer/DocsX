@@ -1,17 +1,43 @@
+/**
+ * @file RecentsDropdown.tsx
+ * @description This component displays a dropdown list of recently viewed documents.
+ * It allows users to quickly navigate to previously accessed documents and clear their recent history.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { useState, useEffect } from "react"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { Clock, ChevronDown, ArrowRight, Trash2 } from "lucide-react"
 
+/**
+ * Interface for a recently viewed document.
+ */
 interface RecentDoc {
+  /** The unique identifier of the document. */
   id: string
+  /** The title of the document. */
   title: string
+  /** The slug of the document, used for URL navigation. */
   slug: string
 }
 
+/**
+ * `RecentsDropdown` component displays a dropdown menu of recently viewed documents.
+ * It fetches recent documents from local storage and provides options to navigate to them or clear the list.
+ *
+ * @returns {JSX.Element} The rendered RecentsDropdown component.
+ */
 export default function RecentsDropdown() {
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to control the open/closed state of the dropdown menu. */
   const [isOpen, setIsOpen] = useState(false)
+  /** @type {[RecentDoc[], React.Dispatch<React.SetStateAction<RecentDoc[]>>]} State to store the list of recently viewed documents. */
   const [recentDocs, setRecentDocs] = useState<RecentDoc[]>([])
 
+  /**
+   * Effect hook to load recent documents from local storage when the component mounts.
+   * It ensures that the component is running in a browser environment before accessing `localStorage`.
+   */
   useEffect(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -21,6 +47,10 @@ export default function RecentsDropdown() {
     }
   }, [])
 
+  /**
+   * Clears all recently viewed documents from local storage and resets the `recentDocs` state.
+   * Also closes the dropdown menu.
+   */
   const clearRecents = () => {
     localStorage.removeItem('recentDocs')
     setRecentDocs([])
@@ -40,7 +70,7 @@ export default function RecentsDropdown() {
             <div className={`absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-blue-600/20 rounded-full transition-all duration-700 ${open ? 'opacity-100 blur-0' : 'opacity-80 blur-sm'}`} />
             <div className={`absolute inset-0 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full opacity-0 transition-all duration-700 ${open ? 'opacity-100 scale-105' : 'group-hover:opacity-50 scale-100'}`} />
             <div className="relative flex items-center gap-3">
-              <div className={`relative p-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 transition-all duration-700 ease-out ${open ? 'rotate-12 scale-110 shadow-lg' : 'rotate-0 scale-100'}`}> 
+              <div className={`relative p-2 rounded-full bg-gradient-to-r from-cyan-500 to-blue-600 shadow-lg transition-all duration-700 ease-out ${open ? 'rotate-12 scale-110 shadow-lg' : 'rotate-0 scale-100'}`}> 
                 <Clock className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-sm tracking-wide">Recents</span>
@@ -96,4 +126,4 @@ export default function RecentsDropdown() {
       )}
     </Menu>
   )
-} 
+}

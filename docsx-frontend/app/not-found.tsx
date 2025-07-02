@@ -1,9 +1,23 @@
+/**
+ * @file not-found.tsx
+ * @description This component serves as a custom 404 Not Found page for the DocsX application.
+ * It provides a user-friendly interface when a requested page or resource cannot be found.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import HeaderBar from "@/components/header-bar"
 import { File, AlertCircle } from "lucide-react"
 import Link from "next/link"
 
+/**
+ * `CustomNotFoundPage` component displays a custom 404 error page.
+ * It informs the user that the requested page was not found and provides a link to return to the home page.
+ *
+ * @returns {JSX.Element} The rendered 404 Not Found page.
+ */
 export default function CustomNotFoundPage() {
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 flex flex-col">

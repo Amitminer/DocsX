@@ -1,3 +1,12 @@
+/**
+ * @file SignInModal.tsx
+ * @description This component provides a modal for user sign-in functionality.
+ * It allows users to sign in using either their username or email address, along with a password.
+ * It handles loading states, displays error messages, and provides a toggle for password visibility.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,25 +15,52 @@ import { X, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, User } from "lucide-r
 import { Button } from "@/components/ui/button"
 import { useAuth } from "./AuthProvider"
 
+/**
+ * Props for the `SignInModal` component.
+ */
 interface SignInModalProps {
+  /** Controls the open/closed state of the modal. */
   isOpen: boolean
+  /** Callback function to close the modal. */
   onClose: () => void
 }
 
+/**
+ * `SignInModal` component provides a user-friendly interface for signing into the application.
+ * It supports sign-in via username or email, includes password visibility toggle, and displays
+ * loading and error states during the authentication process.
+ *
+ * @param {SignInModalProps} { isOpen, onClose } - The props for the component.
+ * @returns {JSX.Element | null} The rendered sign-in modal, or `null` if not open or Clerk is not loaded.
+ */
 export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
+  /** @type {ReturnType<typeof useSignIn>} Clerk's `useSignIn` hook for managing sign-in flow. */
   const { isLoaded, signIn, setActive } = useSignIn()
+  /** @type {ReturnType<typeof useAuth>["openSignUp"]} Function to open the sign-up modal from the AuthProvider context. */
   const { openSignUp } = useAuth()
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the identifier input (username or email). */
   const [identifier, setIdentifier] = useState("")
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the password input. */
   const [password, setPassword] = useState("")
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to toggle password visibility. */
   const [showPassword, setShowPassword] = useState(false)
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the sign-in process is loading. */
   const [isLoading, setIsLoading] = useState(false)
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State to store and display error messages. */
   const [error, setError] = useState("")
+  /** @type {["username" | "email", React.Dispatch<React.SetStateAction<"username" | "email">]} State to switch between username and email login methods. */
   const [loginMethod, setLoginMethod] = useState<"username" | "email">("username")
 
+  // Return null if Clerk is not yet loaded to prevent hydration errors.
   if (!isLoaded) {
     return null
   }
 
+  /**
+   * Handles the form submission for signing in.
+   * Attempts to create a new sign-in session with Clerk.
+   * @param {React.FormEvent} e - The form event.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -39,13 +75,15 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId })
         onClose()
-        // Reset form
+        // Reset form fields after successful sign-in.
         setIdentifier("")
         setPassword("")
       } else {
+        // Fallback error message if Clerk returns an unexpected status.
         setError("Something went wrong. Please try again.")
       }
     } catch (err: unknown) {
+      // Type assertion for error handling from Clerk.
       const error = err as { errors?: Array<{ message: string }> }
       setError(error.errors?.[0]?.message || "An error occurred during sign in")
     } finally {
@@ -53,17 +91,26 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
     }
   }
 
+  /**
+   * Handles the click event for switching to the sign-up modal.
+   * Closes the current sign-in modal and opens the sign-up modal.
+   */
   const handleSignUpClick = () => {
     onClose()
     openSignUp()
   }
 
+  /**
+   * Changes the login method (username or email) and resets related form states.
+   * @param {"username" | "email"} method - The new login method to set.
+   */
   const handleMethodChange = (method: "username" | "email") => {
     setLoginMethod(method)
     setIdentifier("")
     setError("")
   }
 
+  // Render null if the modal is not open.
   if (!isOpen) return null
 
   return (
@@ -163,7 +210,7 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-400/60 focus:border-purple-400/80 transition-all duration-200"
+                  className="w-full pl-10 pr-12 py-3 bg-gray-800/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus://purple-400/60 focus:border-purple-400/80 transition-all duration-200"
                   placeholder="Enter your password"
                   required
                 />
@@ -222,4 +269,4 @@ export default function SignInModal({ isOpen, onClose }: SignInModalProps) {
       </div>
     </div>
   )
-} 
+}

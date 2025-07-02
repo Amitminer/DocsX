@@ -1,3 +1,12 @@
+/**
+ * @file SignUpModal.tsx
+ * @description This component provides a modal for user sign-up functionality.
+ * It allows users to create a new account with their first name, last name, username, email, and password.
+ * It also handles email verification and displays loading states and error messages.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -6,11 +15,21 @@ import { X, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, User, AtSign } from "
 import { Button } from "@/components/ui/button"
 import { useAuth } from "./AuthProvider"
 
+/**
+ * Props for the `SignUpModal` component.
+ */
 interface SignUpModalProps {
+  /** Controls the open/closed state of the modal. */
   isOpen: boolean
+  /** Callback function to close the modal. */
   onClose: () => void
 }
 
+/**
+ * Type guard to check if an error object is a Clerk error.
+ * @param {unknown} err - The error object to check.
+ * @returns {boolean} `true` if the error is a Clerk error, `false` otherwise.
+ */
 function isClerkError(err: unknown): err is { errors: { longMessage?: string; message?: string }[] } {
   return (
     typeof err === "object" &&
@@ -20,24 +39,50 @@ function isClerkError(err: unknown): err is { errors: { longMessage?: string; me
   );
 }
 
+/**
+ * `SignUpModal` component provides a user-friendly interface for signing up for a new account.
+ * It supports email/password registration, includes password visibility toggle, and handles
+ * email verification with a separate step. It also displays loading and error states.
+ *
+ * @param {SignUpModalProps} { isOpen, onClose } - The props for the component.
+ * @returns {JSX.Element | null} The rendered sign-up modal, or `null` if not open or Clerk is not loaded.
+ */
 export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
+  /** @type {ReturnType<typeof useSignUp>} Clerk's `useSignUp` hook for managing sign-up flow. */
   const { isLoaded, signUp, setActive } = useSignUp()
+  /** @type {ReturnType<typeof useAuth>["openSignIn"]} Function to open the sign-in modal from the AuthProvider context. */
   const { openSignIn } = useAuth()
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the first name input. */
   const [firstName, setFirstName] = useState("")
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the last name input. */
   const [lastName, setLastName] = useState("")
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the username input. */
   const [username, setUsername] = useState("")
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the email input. */
   const [email, setEmail] = useState("")
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the password input. */
   const [password, setPassword] = useState("")
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to toggle password visibility. */
   const [showPassword, setShowPassword] = useState(false)
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the sign-up process is loading. */
   const [isLoading, setIsLoading] = useState(false)
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State to store and display error messages. */
   const [error, setError] = useState("")
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if email verification is pending. */
   const [pendingVerification, setPendingVerification] = useState(false)
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the verification code input. */
   const [code, setCode] = useState("")
 
+  // Return null if Clerk is not yet loaded to prevent hydration errors.
   if (!isLoaded) {
     return null
   }
 
+  /**
+   * Handles the form submission for signing up.
+   * Attempts to create a new user account with Clerk.
+   * @param {React.FormEvent} e - The form event.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -53,7 +98,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId })
         onClose()
-        // Reset form
+        // Reset form fields after successful sign-up.
         setFirstName("")
         setLastName("")
         setUsername("")
@@ -62,6 +107,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       } else if (result.status === "missing_requirements") {
         setPendingVerification(true)
       } else {
+        // Fallback error message if Clerk returns an unexpected status.
         setError("Something went wrong. Please try again.")
       }
     } catch (err: unknown) {
@@ -75,6 +121,11 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     }
   }
 
+  /**
+   * Handles the form submission for email verification.
+   * Attempts to verify the email address with the provided code.
+   * @param {React.FormEvent} e - The form event.
+   */
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -88,7 +139,7 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       if (result.status === "complete") {
         await setActive({ session: result.createdSessionId })
         onClose()
-        // Reset form
+        // Reset form fields after successful verification.
         setFirstName("")
         setLastName("")
         setUsername("")
@@ -110,11 +161,16 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
     }
   }
 
+  /**
+   * Handles the click event for switching to the sign-in modal.
+   * Closes the current sign-up modal and opens the sign-in modal.
+   */
   const handleSignInClick = () => {
     onClose()
     openSignIn()
   }
 
+  // Render null if the modal is not open.
   if (!isOpen) return null
 
   return (
@@ -353,4 +409,4 @@ export default function SignUpModal({ isOpen, onClose }: SignUpModalProps) {
       </div>
     </div>
   )
-} 
+}

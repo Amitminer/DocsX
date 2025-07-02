@@ -1,3 +1,11 @@
+/**
+ * @file markdown-preview.tsx
+ * @description This component provides a live preview of Markdown content, including custom rendering for code blocks, images, and other Markdown elements.
+ * It allows users to toggle the visibility of the preview.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState } from "react"
@@ -8,15 +16,31 @@ import CodeBlock from "./code-block"
 import { config } from "@/lib/config"
 import rehypeRaw from "rehype-raw"
 
+/**
+ * Props for the `MarkdownPreview` component.
+ */
 interface MarkdownPreviewProps {
+	/** The Markdown content to be previewed. */
 	content: string
+	/** Optional CSS class names to apply to the container. */
 	className?: string
+	/** The unique identifier of the document, used for resolving asset URLs. */
 	docId?: string
 }
 
+/**
+ * Renders a live preview of Markdown content.
+ * It includes a toggle to show/hide the preview and custom rendering for various Markdown elements
+ * to ensure consistency with the main document view.
+ *
+ * @param {MarkdownPreviewProps} { content, className, docId } - The props for the component.
+ * @returns {JSX.Element} The rendered Markdown preview component.
+ */
 export default function MarkdownPreview({ content, className = "", docId }: MarkdownPreviewProps) {
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to control the visibility of the Markdown preview. */
 	const [showPreview, setShowPreview] = useState(true)
 
+	// If content is empty, display a message prompting the user to start typing.
 	if (!content.trim()) {
 		return (
 			<div className={className}>
@@ -59,9 +83,10 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 				<div className="bg-gray-900 border border-gray-700 rounded-lg p-6 max-h-96 overflow-y-auto">
 					<div className="prose prose-invert prose-purple max-w-none">
 						<ReactMarkdown
-							remarkPlugins={[remarkGfm]}
-							rehypePlugins={[rehypeRaw]}
+							remarkPlugins={[remarkGfm]} // Enables GitHub Flavored Markdown
+							rehypePlugins={[rehypeRaw]} // Allows rendering raw HTML within Markdown
 							components={{
+								/** Custom renderer for `code` blocks (both inline and fenced). */
 								code(props) {
 									const { children, className, ...rest } = props
 									const match = /language-(\w+)/.exec(className || "")
@@ -81,11 +106,13 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 										</CodeBlock>
 									)
 								},
+								/** Custom renderer for `img` (images). */
 								img: (props) => {
 									if (!props.src) {
 										return null;
 									}
 									let finalSrc = typeof props.src === "string" ? props.src : "";
+									// Resolve internal asset paths to full API URLs
 									if (docId) {
 										if (finalSrc.startsWith('/docs/')) {
 											const parts = finalSrc.split("/");
@@ -98,6 +125,7 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 										}
 									}
 									const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(finalSrc);
+									// If the source is a video, render a simple video tag for preview
 									if (isVideo) {
 										return (
 											<video
@@ -139,6 +167,7 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 								),
 								a: ({ href, children }) => {
 									let finalHref = typeof href === "string" ? href : "";
+									// Resolve internal asset paths to full API URLs
 									if (typeof finalHref === "string" && docId) {
 										if (finalHref.startsWith("/docs/")) {
 											// Convert /docs/{docId}/{filename} to /assets/{docId}/{filename}
@@ -163,15 +192,21 @@ export default function MarkdownPreview({ content, className = "", docId }: Mark
 										</a>
 									);
 								},
+								/** Custom renderer for `p` (paragraphs). */
 								p: ({ children }) => <p className="text-gray-300 leading-relaxed mb-3">{children}</p>,
+								/** Custom renderer for `ul` (unordered lists). */
 								ul: ({ children }) => (
 									<ul className="list-disc list-inside my-3 space-y-1 text-gray-300">{children}</ul>
 								),
+								/** Custom renderer for `ol` (ordered lists). */
 								ol: ({ children }) => (
 									<ol className="list-decimal list-inside my-3 space-y-1 text-gray-300">{children}</ol>
 								),
+								/** Custom renderer for `hr` (horizontal rule). */
 								hr: () => <hr className="border-gray-700 my-4" />,
+								/** Custom renderer for `strong` (bold text). */
 								strong: ({ children }) => <strong className="font-semibold text-white">{children}</strong>,
+								/** Custom renderer for `em` (emphasized text). */
 								em: ({ children }) => <em className="italic text-gray-300">{children}</em>,
 							}}
 						>

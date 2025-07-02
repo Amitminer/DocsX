@@ -1,3 +1,12 @@
+/**
+ * @file page.tsx
+ * @description This is the main home page component for the DocsX frontend application.
+ * It displays a list of documentation and tutorials, provides search and filtering capabilities,
+ * and integrates AI features like summarization. It also handles loading states, errors, and pagination.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -14,11 +23,23 @@ import Link from "next/link"
 import RecentsDropdown from "@/components/dropdowns/RecentsDropdown"
 import { SmartSearch } from "@/components/ai/smart-search"
 
+/**
+ * The main home page component for the DocsX frontend.
+ * It fetches and displays documentation, handles search, sorting, pagination,
+ * and integrates AI summarization and bookmarking features.
+ *
+ * @returns {JSX.Element} The rendered home page.
+ */
 export default function HomePage() {
+	/** @type {React.MutableRefObject<Record<string, string | undefined>>} Ref to cache author profile picture URLs. */
 	const pfpCache = useRef<Record<string, string | undefined>>({})
+	/** @type {[Record<string, string | undefined>, React.Dispatch<React.SetStateAction<Record<string, string | undefined>>]} State to store author image URLs. */
 	const [authorImages, setAuthorImages] = useState<Record<string, string | undefined>>({})
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to track if profile pictures have been loaded. */
 	const [pfpLoaded, setPfpLoaded] = useState(false)
+	/** @type {[string | null, React.Dispatch<React.SetStateAction<string | null>>]} State to store the ID of the document for which a summary is active. */
 	const [activeSummaryDocId, setActiveSummaryDocId] = useState<string | null>(null);
+	/** @type {ReturnType<typeof useAISummary>} Hook for AI summarization functionality. */
 	const {
 		showSummary,
 		summary,
@@ -27,8 +48,11 @@ export default function HomePage() {
 		setShowSummary,
 		setSummary,
 	} = useAISummary();
+	/** @type {[object, React.Dispatch<React.SetStateAction<object>>]} State for filter parameters (currently unused, but part of the original hook). */
 	const [filterParams] = useState<{ author?: string; tags?: string[]; date?: string; sort?: string }>({})
+	/** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to toggle displaying bookmarked documents. */
 	const [showBookmarks, setShowBookmarks] = useState(false)
+	/** @type {ReturnType<typeof useDocs>} Hook for document fetching and management. */
 	const {
 		docs,
 		loading,
@@ -45,12 +69,19 @@ export default function HomePage() {
 		loadMore,
 		loadingMore,
 	} = useDocs(filterParams)
+	/** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the current search input value. */
 	const [searchValue, setSearchValue] = useState("")
 
 	// Footer constants
+	/** @type {number} The current year for the footer copyright. */
 	const currentYear = new Date().getFullYear()
+	/** @type {string} The GitHub repository link for DocsX. */
 	const CurrentGithubLink = "https://github.com/Amitminer/DocsX"
 
+	/**
+	 * Effect to fetch author profile pictures based on unique author IDs from fetched documents.
+	 * Caches fetched URLs to avoid redundant API calls.
+	 */
 	useEffect(() => {
 		if (docs.length === 0) return;
 		const uniqueAuthors = Array.from(new Set(docs.map(doc => doc.author_id).filter(Boolean)));
@@ -73,6 +104,7 @@ export default function HomePage() {
 			});
 	}, [docs]);
 
+	// Renders an error message if document fetching fails.
 	if (error) {
 		return (
 			<div className="min-h-screen bg-gradient-to-br from-slate-950 via-gray-900 to-slate-950 contain-paint">
@@ -116,12 +148,19 @@ export default function HomePage() {
 		)
 	}
 
+	/**
+	 * Handles a click on a tag, adding it to the search query and refetching documents.
+	 * @param {string} tag - The tag to add to the search query.
+	 */
 	const handleTagClick = (tag: string) => {
 		const newQuery = searchQuery.includes(`tag:${tag}`) ? searchQuery : `${searchQuery} tag:${tag}`.trim();
 		setSearchQuery(newQuery);
 		handlePageChange(1);
 	};
 
+	/**
+	 * Handles the smart search submission, updating the search query and resetting to the first page.
+	 */
 	const handleSmartSearch = () => {
 		setSearchQuery(searchValue)
 		handlePageChange(1)

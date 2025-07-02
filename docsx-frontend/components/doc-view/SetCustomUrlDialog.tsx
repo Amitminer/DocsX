@@ -1,3 +1,11 @@
+/**
+ * @file SetCustomUrlDialog.tsx
+ * @description This component provides a dialog for setting or deleting a custom URL slug for a document.
+ * It allows users to create human-readable URLs for their documents and manages the interaction with the backend API.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { useState, useEffect, Fragment } from "react"
@@ -5,23 +13,50 @@ import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from "@
 import { Link as LinkIcon, Trash2 } from "lucide-react"
 import { useAuth } from "@clerk/nextjs"
 
+/**
+ * Props for the `SetCustomUrlDialog` component.
+ */
 interface SetCustomUrlDialogProps {
+  /** Controls the open/closed state of the dialog. */
   open: boolean
+  /** Callback function to change the open state of the dialog. */
   onOpenChange: (open: boolean) => void
+  /** The unique identifier of the document for which to set the custom URL. */
   docId: string
+  /** Optional callback function to be called upon successful save or delete. */
   onSuccess?: () => void
 }
 
+/**
+ * `SetCustomUrlDialog` component allows users to manage custom URL slugs for their documents.
+ * It provides functionality to set a new custom URL, display the current one, and delete an existing custom URL.
+ * It includes validation for the custom URL format and handles API interactions.
+ *
+ * @param {SetCustomUrlDialogProps} { open, onOpenChange, docId, onSuccess } - The props for the component.
+ * @returns {JSX.Element} The rendered custom URL dialog.
+ */
 export default function SetCustomUrlDialog({ open, onOpenChange, docId, onSuccess }: SetCustomUrlDialogProps) {
+  /** @type {ReturnType<typeof useAuth>["getToken"]} Function to get the authentication token. */
   const { getToken } = useAuth();
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State for the input field of the custom URL. */
   const [customUrl, setCustomUrl] = useState("")
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if an API operation (save/delete) is in progress. */
   const [loading, setLoading] = useState(false)
+  /** @type {[string, React.Dispatch<React.SetStateAction<string>>]} State to store and display error messages. */
   const [error, setError] = useState("")
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the last operation was successful. */
   const [success, setSuccess] = useState(false)
+  /** @type {[string | null, React.Dispatch<React.SetStateAction<string | null>>]} State to store the currently set custom URL for the document. */
   const [currentCustomUrl, setCurrentCustomUrl] = useState<string | null>(null)
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if the component is currently checking for an existing custom URL. */
   const [checking, setChecking] = useState(false)
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to indicate if a delete operation is in progress. */
   const [deleting, setDeleting] = useState(false)
 
+  /**
+   * Effect hook to fetch the current custom URL for the document when the dialog opens.
+   * Resets states when the dialog closes.
+   */
   useEffect(() => {
     if (open && docId) {
       setChecking(true)
@@ -40,10 +75,19 @@ export default function SetCustomUrlDialog({ open, onOpenChange, docId, onSucces
     }
   }, [open, docId])
 
+  /**
+   * Handles the cancellation of the dialog.
+   * Closes the dialog.
+   */
   function handleCancel() {
     onOpenChange(false)
   }
 
+  /**
+   * Handles saving the custom URL.
+   * Validates the input, checks for uniqueness, and sends a POST request to the backend.
+   * Displays success or error messages.
+   */
   async function handleSave() {
     setLoading(true)
     setError("")
@@ -90,6 +134,10 @@ export default function SetCustomUrlDialog({ open, onOpenChange, docId, onSucces
     setLoading(false)
   }
 
+  /**
+   * Handles deleting the custom URL.
+   * Sends a POST request to the backend to remove the custom URL mapping.
+   */
   async function handleDelete() {
     setDeleting(true)
     setError("")

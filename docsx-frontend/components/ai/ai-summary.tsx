@@ -1,8 +1,25 @@
+/**
+ * @file ai-summary.tsx
+ * @description This component displays an AI-generated summary of a document.
+ * It provides a clear, concise overview of the document's content, powered by Google AI.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 "use client"
 
 import { Sparkles, X } from "lucide-react"
 import type { AISummaryProps } from "../types/doc-view"
 
+/**
+ * `AISummary` component displays an AI-generated summary of a document.
+ * It presents the summary in a visually appealing box with a clear header and a close button.
+ *
+ * @param {AISummaryProps} { summary, onClose } - The props for the component.
+ * @param {string} props.summary - The AI-generated summary text.
+ * @param {() => void} props.onClose - Callback function to close the summary display.
+ * @returns {JSX.Element} The rendered AI summary component.
+ */
 export function AISummary({ summary, onClose }: AISummaryProps) {
 	return (
 		<div className="relative bg-gradient-to-br from-purple-900/40 via-blue-900/40 to-purple-900/40 backdrop-blur-xl border border-purple-500/30 rounded-3xl p-6 sm:p-8 mb-6 shadow-2xl">

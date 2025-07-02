@@ -1,8 +1,23 @@
+/**
+ * @file route.ts
+ * @description This module defines the API route for generating AI summaries of document content.
+ * It uses the Google Gemini model via the Vercel AI SDK to create concise summaries.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { google } from '@ai-sdk/google';
 import { generateText } from 'ai';
 import { type NextRequest, NextResponse } from "next/server"
 import { ApiError } from '@/lib/utils';
 
+/**
+ * Handles POST requests for document summarization.
+ * It takes a document title and content as input and returns an AI-generated summary.
+ *
+ * @param {NextRequest} request - The incoming Next.js request object, containing the title and content to be summarized in its body.
+ * @returns {NextResponse} A Next.js response object containing the summary or an error message.
+ */
 export async function POST(request: NextRequest) {
 	try {
 		const { title, content } = await request.json()

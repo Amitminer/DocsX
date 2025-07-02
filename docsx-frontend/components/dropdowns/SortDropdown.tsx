@@ -1,15 +1,41 @@
+/**
+ * @file SortDropdown.tsx
+ * @description This component provides a dropdown menu for sorting documents based on different criteria.
+ * It allows users to sort by latest, most liked, or bookmarked documents.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { Clock, TrendingUp, ChevronDown, Sparkles, Bookmark } from "lucide-react"
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react"
 import { useState } from "react"
 
+/**
+ * Props for the `SortDropdown` component.
+ */
 interface SortDropdownProps {
+  /** The current sorting criteria. */
   sortBy: "created_at" | "likes" | "bookmarked"
+  /** Callback function to be called when the sort order changes. */
   onSortChange: (sort: "created_at" | "likes" | "bookmarked") => void
 }
 
+/**
+ * `SortDropdown` component displays a dropdown menu for selecting document sorting criteria.
+ * It allows users to sort documents by creation date (latest), number of likes (most liked), or bookmarked status.
+ *
+ * @param {SortDropdownProps} { sortBy, onSortChange } - The props for the component.
+ * @returns {JSX.Element} The rendered SortDropdown component.
+ */
 export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps) {
+  /** @type {[boolean, React.Dispatch<React.SetStateAction<boolean>>]} State to control the open/closed state of the dropdown menu. */
   const [isOpen, setIsOpen] = useState(false)
 
+  /**
+   * Returns configuration details for a given sort type.
+   * @param {string} type - The type of sort (e.g., "created_at", "likes", "bookmarked").
+   * @returns {object} An object containing the icon, label, and styling for the sort type.
+   */
   const getSortConfig = (type: string) => {
     switch (type) {
       case "created_at":
@@ -51,7 +77,9 @@ export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps
     }
   }
 
+  /** @type {ReturnType<typeof getSortConfig>} The configuration for the currently selected sort option. */
   const currentConfig = getSortConfig(sortBy)
+  /** @type {React.ElementType} The icon component for the currently selected sort option. */
   const IconComponent = currentConfig.icon
 
   return (
@@ -147,4 +175,4 @@ export default function SortDropdown({ sortBy, onSortChange }: SortDropdownProps
       )}
     </Menu>
   )
-} 
+}

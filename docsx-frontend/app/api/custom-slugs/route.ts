@@ -1,11 +1,26 @@
+/**
+ * @file route.ts
+ * @description This module defines the API routes for managing custom document slugs.
+ * It acts as a proxy to the backend slug API, handling GET and POST requests for slug creation, retrieval, and deletion.
+ * @author AmitxD
+ * @copyright 2024 AmitxD
+ */
+
 import { NextRequest, NextResponse } from "next/server"
 import { ApiError } from '@/lib/utils'
 
+/**
+ * The base URL for the backend API, retrieved from environment variables.
+ */
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080/api";
 
-// GET /api/custom-slugs: fetch all slugs (for mapping)
-// GET /api/custom-slugs?docId=...: get current slug for a doc
-// GET /api/custom-slugs/{slug}: resolve a slug to docId
+/**
+ * Handles GET requests for custom slugs.
+ * Supports fetching all slugs, getting the current slug for a specific document ID, or resolving a slug to a document ID.
+ *
+ * @param {NextRequest} req - The incoming Next.js request object.
+ * @returns {NextResponse} A Next.js response object containing the requested slug data or an error message.
+ */
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const docId = searchParams.get('docId');
@@ -74,7 +89,13 @@ export async function GET(req: NextRequest) {
   }
 }
 
-// Proxy POST: set or delete a slug
+/**
+ * Handles POST requests for custom slugs.
+ * Supports setting a new custom slug for a document or deleting an existing one.
+ *
+ * @param {NextRequest} req - The incoming Next.js request object, containing `docId` and `custom` (the slug or "__DELETE__") in its body.
+ * @returns {NextResponse} A Next.js response object indicating success or failure of the operation.
+ */
 export async function POST(req: NextRequest) {
   try {
     const { docId, custom } = await req.json()
@@ -113,4 +134,4 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ error: "Failed to update custom slug" }, { status: 500 })
   }
-} 
+}
