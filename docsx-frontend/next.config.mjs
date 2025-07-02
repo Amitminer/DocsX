@@ -19,7 +19,7 @@ const nextConfig = {
 		return process.env.GIT_HASH || "null"
 	},
 	experimental: {
-		useCache: true,
+		// useCache: true,
 		optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react'],
 	},
 }
