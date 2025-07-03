@@ -3,7 +3,7 @@
  * @description This component provides a button that, when clicked, either triggers a provided action if the user is signed in,
  * or opens the sign-in modal if the user is not authenticated.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client";

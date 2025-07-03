@@ -3,7 +3,7 @@
  * @description This module defines the API route for enhancing document content using AI.
  * It leverages the Google Gemini model via the Vercel AI SDK to improve the quality of Markdown content.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { google } from '@ai-sdk/google';
@@ -37,16 +37,21 @@ export async function POST(request: NextRequest) {
 
 		console.log("Enhancing content with Vercel AI SDK...")
 
-		const response = await generateText({
+		const result = await generateText({
 			model: google('gemini-2.0-flash'),
-			prompt: `Improve the grammar, formatting, and clarity of this markdown content (don't include the ```markdown``` ). Make it more professional and easy to read while preserving all the technical information and structure. Return only the improved markdown content without any explanations.
+			messages: [
+				{
+					role: "user",
+					content: `Improve the grammar, formatting, and clarity of this markdown content (don't include the \`\`\`markdown\`\`\`). Make it more professional and easy to read while preserving all the technical information and structure. Return only the improved markdown content without any explanations.
 
 Content to enhance:
-${truncatedContent}`,
-			maxTokens: 2000, // Allow more tokens for content enhancement
-			temperature: 0.1, // Low temperature for consistent improvements
+${truncatedContent}`
+				}
+			],
+			maxTokens: 2000,
+			temperature: 0.1,
 		});
-		const enhancedContent = response.text;
+		const enhancedContent = result.text;
 
 			if (!enhancedContent) {
 			console.error("No enhanced content generated")

@@ -3,7 +3,7 @@
  * @description This component renders a single tag as a clickable or removable chip.
  * It provides visual styling for tags and optional interaction capabilities.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

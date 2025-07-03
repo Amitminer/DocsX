@@ -1,3 +1,11 @@
+/**
+ * @file asset-card.tsx
+ * @description Card component for displaying and managing document assets (files, images) in DocsX.
+ * Shows asset info, download, copy, and delete actions.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -16,6 +24,12 @@ export interface DocAsset {
 	url: string;
 }
 
+/**
+ * AssetCard component displays a document asset with actions (download, copy, delete).
+ *
+ * @param {{ asset: DocAsset }} props - Props containing the asset to display.
+ * @returns {JSX.Element} The rendered asset card.
+ */
 export default function AssetCard({ asset }: { asset: DocAsset }) {
 	const { getToken } = useAuth();
 	const [open, setOpen] = useState(false);

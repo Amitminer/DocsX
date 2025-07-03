@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - PostgreSQL Database
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - PostgreSQL Database
+//! Copyright 2025 AmitxD
 //!
 //! This module handles the connection to the PostgreSQL database.
 //! It provides functions for creating a connection pool and initializing the database schema.

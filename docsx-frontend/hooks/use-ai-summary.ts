@@ -3,7 +3,7 @@
  * @description This hook provides functionality for generating AI summaries of document content.
  * It manages the state of the summary generation process, including loading, errors, and the summary text itself.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

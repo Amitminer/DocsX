@@ -4,7 +4,7 @@
  * including CSS class concatenation, date formatting, and local storage management for bookmarked documents.
  * It also defines a custom error class for API-related errors.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { clsx, type ClassValue } from "clsx"

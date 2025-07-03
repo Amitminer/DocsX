@@ -3,7 +3,7 @@
  * @description This component is responsible for rendering toast notifications using the `useToast` hook.
  * It acts as a container for all active toasts, ensuring they are displayed correctly.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

@@ -3,7 +3,7 @@
  * @description This module defines the global configuration settings for the DocsX frontend application.
  * It includes API base URLs and pagination settings.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 /**

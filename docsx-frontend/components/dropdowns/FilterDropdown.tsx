@@ -3,7 +3,7 @@
  * @description This component provides a dropdown menu for filtering documents based on tags, author, and upload date.
  * It allows users to refine their search results with various criteria.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { useState } from "react"

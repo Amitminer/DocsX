@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - asset_handler
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - asset_handler
+//! Copyright 2025 AmitxD
 //!
 //! This module handles all the business logic for asset management.
 //! From uploading, listing, serving, and deleting assets, this module has it all.

@@ -3,7 +3,7 @@
  * @description This module defines the core interfaces for document data and API responses.
  * It provides a clear structure for how document information is represented and exchanged within the application.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 /**

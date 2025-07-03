@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Auth Middleware
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Auth Middleware
+//! Copyright 2025 AmitxD
 //!
 //! This module provides the authentication middleware for the application.
 //! It verifies the JWT token from the `Authorization` header and extracts the user information.

@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Slugs API
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Slugs API
+//! Copyright 2025 AmitxD
 //!
 //! This module defines the API endpoints for managing custom URL slugs for documents.
 //! It allows users to create, retrieve, and delete custom slugs for their documents,

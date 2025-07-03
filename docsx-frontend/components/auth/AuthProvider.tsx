@@ -3,7 +3,7 @@
  * @description This module provides an authentication context and provider for the application.
  * It manages the state of sign-in and sign-up modals and exposes functions to control them.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { createContext, useContext, useState, ReactNode } from "react"

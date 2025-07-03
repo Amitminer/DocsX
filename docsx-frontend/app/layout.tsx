@@ -3,7 +3,7 @@
  * @description This is the root layout component for the DocsX frontend application.
  * It sets up the Clerk authentication provider, applies global styles, and defines metadata for the application.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import type React from "react"

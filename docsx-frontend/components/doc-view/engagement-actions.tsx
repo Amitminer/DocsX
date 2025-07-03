@@ -1,9 +1,23 @@
+/**
+ * @file engagement-actions.tsx
+ * @description Component for displaying and handling engagement actions (like, bookmark, AI summary, chat) for DocsX documents.
+ * Provides UI for user interactions on docs.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { Heart, Bookmark, Sparkles, Eye, MessageCircle } from "lucide-react"
 import { ProtectedActionButton } from "../auth/protected-action-button"
 import type { EngagementActionsProps } from "../types/doc-view"
 
+/**
+ * EngagementActions component renders buttons for likes, bookmarks, AI summary, and chat.
+ *
+ * @param {EngagementActionsProps} props - Props for engagement actions.
+ * @returns {JSX.Element} The rendered engagement actions UI.
+ */
 export function EngagementActions({
 	likes,
 	views = 0,

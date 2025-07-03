@@ -3,7 +3,7 @@
  * @description This page allows users to create new documentation entries.
  * It provides a form for inputting document details and handles the submission to the backend API.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

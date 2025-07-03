@@ -3,7 +3,7 @@
  * @description This barrel file re-exports authentication-related components and hooks for easier import.
  * It provides a centralized point of access to the authentication modules.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 /**

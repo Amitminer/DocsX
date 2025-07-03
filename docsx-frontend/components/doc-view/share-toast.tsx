@@ -3,7 +3,7 @@
  * @description This component displays a transient toast notification indicating that a link has been copied to the clipboard.
  * It provides visual feedback to the user after a successful copy action.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

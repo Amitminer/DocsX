@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Main Entry Point
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Main Entry Point
+//! Copyright 2025 AmitxD
 //!
 //! This is the main entry point for the DocsX backend server.
 //! It sets up the database connection, initializes the logger, configures CORS,

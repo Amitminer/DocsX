@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Document Models
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Document Models
+//! Copyright 2025 AmitxD
 //!
 //! This module defines the data models related to documents, including the main `Doc` struct,
 //! request and response structs, and query parameters. These models are the blueprint

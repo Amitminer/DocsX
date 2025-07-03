@@ -1,3 +1,11 @@
+/**
+ * @file doc-card.tsx
+ * @description Card component for displaying a summary of a DocsX document, including title, author, tags, and engagement.
+ * Provides a preview and actions for a single doc.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -23,6 +31,12 @@ interface DocCardProps {
 	onTagClick?: (tag: string) => void
 }
 
+/**
+ * DocCard component displays a summary card for a DocsX document.
+ *
+ * @param {DocCardProps} props - Props for the document card.
+ * @returns {JSX.Element} The rendered document card.
+ */
 export default function DocCard({
 	id,
 	title,

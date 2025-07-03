@@ -3,7 +3,7 @@
  * @description This module defines interfaces for document viewing components and their props.
  * It includes types for document data, header properties, engagement actions, and AI-related features.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { ReactNode } from "react"

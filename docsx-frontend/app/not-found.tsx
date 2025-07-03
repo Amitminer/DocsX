@@ -3,7 +3,7 @@
  * @description This component serves as a custom 404 Not Found page for the DocsX application.
  * It provides a user-friendly interface when a requested page or resource cannot be found.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

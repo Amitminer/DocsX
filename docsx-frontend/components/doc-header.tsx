@@ -1,3 +1,11 @@
+/**
+ * @file doc-header.tsx
+ * @description Header component for displaying document metadata (title, author, actions) in DocsX.
+ * Shows document info and action dropdown.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { User, Calendar, MoreVertical, Sparkles, Zap } from "lucide-react"
@@ -18,6 +26,12 @@ function wrapEmojis(text: string) {
 	);
 }
 
+/**
+ * DocHeader component displays the header for a DocsX document, including title, author, and actions.
+ *
+ * @param {DocHeaderProps & { children?: ReactNode }} props - Props for the document header.
+ * @returns {JSX.Element} The rendered document header.
+ */
 export function DocHeader({
 	title,
 	author,

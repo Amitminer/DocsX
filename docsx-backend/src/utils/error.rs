@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - error
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - error
+//! Copyright 2025 AmitxD
 //!
 //! This module defines the custom error types used throughout the application.
 //! It's the single source of truth for all things that can go wrong.

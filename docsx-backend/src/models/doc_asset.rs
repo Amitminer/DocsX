@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - doc_asset
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - doc_asset
+//! Copyright 2025 AmitxD
 //!
 //! This module defines the `DocAsset` model, which represents an asset associated with a document.
 //! It's a simple struct, but it's the foundation of our asset management system.

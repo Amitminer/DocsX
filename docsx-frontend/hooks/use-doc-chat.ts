@@ -3,7 +3,7 @@
  * @description This hook manages the state and functionality for the document-specific AI chat feature.
  * It provides methods to open and close the chat interface.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { useState } from "react"

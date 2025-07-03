@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Assets API
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Assets API
+//! Copyright 2025 AmitxD
 //!
 //! This module defines the API endpoints for managing document assets.
 //! It provides routes for uploading, serving, listing, and deleting assets

@@ -3,7 +3,7 @@
  * @description This component provides a dropdown menu for sorting documents based on different criteria.
  * It allows users to sort by latest, most liked, or bookmarked documents.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { Clock, TrendingUp, ChevronDown, Sparkles, Bookmark } from "lucide-react"

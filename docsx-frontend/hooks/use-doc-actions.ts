@@ -1,3 +1,11 @@
+/**
+ * @file use-doc-actions.ts
+ * @description React hook for managing document actions (like, bookmark, share) for DocsX documents.
+ * Handles state and API calls for user engagement features.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { useEffect, useState } from "react"
@@ -8,7 +16,14 @@ function isValidUUID(id: string): boolean {
 	return /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
 }
 
-export function useDocActions(initialLikes: number, docId: string) {
+/**
+ * useDocActions hook provides state and handlers for liking, bookmarking, and sharing a document.
+ *
+ * @param {number} initialLikes - Initial like count for the document.
+ * @param {string} docId - The document's unique identifier.
+ * @returns {object} State and action handlers for doc engagement.
+ */
+export function useDocActions(initialLikes: number, docId: string): object {
 	const [isLiked, setIsLiked] = useState(false)
 	const [likeCount, setLikeCount] = useState(initialLikes)
 	const [isBookmarked, setIsBookmarked] = useState(false)

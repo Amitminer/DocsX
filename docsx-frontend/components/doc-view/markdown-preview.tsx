@@ -3,7 +3,7 @@
  * @description This component provides a live preview of Markdown content, including custom rendering for code blocks, images, and other Markdown elements.
  * It allows users to toggle the visibility of the preview.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

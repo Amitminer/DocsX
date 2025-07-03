@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Clerk Authentication
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Clerk Authentication
+//! Copyright 2025 AmitxD
 //!
 //! This module handles the authentication logic using Clerk.
 //! It provides a way to verify JWT tokens and extract user information.

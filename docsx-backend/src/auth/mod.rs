@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Authentication Module
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Authentication Module
+//! Copyright 2025 AmitxD
 //!
 //! This module handles all authentication-related logic.
 //! It contains submodules for specific authentication providers, like Clerk,

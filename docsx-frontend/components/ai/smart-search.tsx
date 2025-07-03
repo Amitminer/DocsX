@@ -1,3 +1,11 @@
+/**
+ * @file smart-search.tsx
+ * @description Smart search bar component for DocsX, supporting filters, suggestions, and advanced search for documents.
+ * Provides a UI for searching and filtering docs with helpful UX.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { useState, useRef, useEffect } from "react"
@@ -20,6 +28,12 @@ const FILTER_SUGGESTIONS = [
 
 const TAG_SUGGESTIONS = ["rust", "python", "minecraft"]
 
+/**
+ * SmartSearch component renders a search bar with filter and suggestion support.
+ *
+ * @param {SmartSearchProps} props - Props for the smart search bar.
+ * @returns {JSX.Element} The rendered smart search UI.
+ */
 export function SmartSearch({ value, onChange, onSearch, placeholder = "Search docs...", className = "" }: SmartSearchProps) {
 	const [showSuggestions, setShowSuggestions] = useState(false)
 	const [selectedSuggestion, setSelectedSuggestion] = useState(-1)

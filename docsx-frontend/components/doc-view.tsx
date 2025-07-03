@@ -3,7 +3,7 @@
  * @description This component displays a single document, including its header, content, and engagement actions.
  * It integrates AI features like summarization and chat, and handles user interactions such as liking, bookmarking, and sharing.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

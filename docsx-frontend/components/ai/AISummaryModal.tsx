@@ -3,7 +3,7 @@
  * @description This component provides a modal dialog to display AI-generated summaries.
  * It shows a loading state while the summary is being generated and then displays the summary content.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react"

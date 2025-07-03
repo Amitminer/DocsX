@@ -3,7 +3,7 @@
  * @description This component displays a dropdown list of recently viewed documents.
  * It allows users to quickly navigate to previously accessed documents and clear their recent history.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { useState, useEffect } from "react"

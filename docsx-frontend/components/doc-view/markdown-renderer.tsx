@@ -3,7 +3,7 @@
  * @description This component renders Markdown content using `react-markdown` with custom styling and handling for various elements.
  * It supports GitHub Flavored Markdown, raw HTML, and includes custom rendering for code blocks, headings, tables, links, and images/videos.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"
@@ -107,7 +107,7 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 											try {
 												await navigator.clipboard.writeText(codeString)
 											} catch (err) {
-\t											console.error("Failed to copy code:", err)
+												console.error("Failed to copy code:", err)
 											}
 										}}
 										className="flex items-center gap-2 bg-gradient-to-r from-gray-800/95 to-gray-700/95 hover:from-gray-700/95 hover:to-gray-600/95 text-gray-300 hover:text-white px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs sm:text-sm transition-all duration-200 backdrop-blur-sm border border-gray-600/40 shadow-lg hover:shadow-xl hover:scale-105"
@@ -299,7 +299,7 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 					p: ({ children }) => {
 						// If any child is a block element, use div instead of p to avoid invalid HTML nesting
 						const hasBlock = React.Children.toArray(children).some(
-							(child: any) =>
+							(child) =>
 								React.isValidElement(child) &&
 								typeof child.type === 'string' &&
 								['div', 'video', 'table', 'ul', 'ol', 'pre'].includes(child.type)

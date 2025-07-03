@@ -3,7 +3,7 @@
  * @description This module defines a reusable Button component based on Radix UI's Slot primitive and `class-variance-authority` for styling.
  * It provides various visual variants and sizes for consistent button styling across the application.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import * as React from "react"

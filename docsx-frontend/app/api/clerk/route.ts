@@ -3,7 +3,7 @@
  * @description This module defines the API route for fetching Clerk user data, specifically profile image URLs.
  * It supports fetching data for single users or in batches.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { NextRequest, NextResponse } from 'next/server';

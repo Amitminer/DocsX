@@ -3,7 +3,7 @@
  * @description This module defines the Clerk middleware for the Next.js application.
  * It protects routes and handles authentication by integrating with Clerk's authentication system.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { clerkMiddleware } from "@clerk/nextjs/server";

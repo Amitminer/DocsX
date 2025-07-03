@@ -3,10 +3,10 @@
  * @description This component provides a custom video player with controls for play/pause, volume, progress, and fullscreen.
  * It handles hydration issues by only rendering interactive elements after client-side mount.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { Download } from "lucide-react";
 
 /**
@@ -17,6 +17,18 @@ interface CustomVideoPlayerProps {
   src: string;
   /** Optional alt text for the video. */
   alt?: string;
+}
+
+// Extend HTMLElement and Document for cross-browser fullscreen API support
+interface FullscreenElement extends HTMLElement {
+  webkitRequestFullscreen?: () => Promise<void>;
+  msRequestFullscreen?: () => Promise<void>;
+}
+interface FullscreenDocument extends Document {
+  webkitExitFullscreen?: () => Promise<void>;
+  msExitFullscreen?: () => Promise<void>;
+  webkitFullscreenElement?: Element | null;
+  msFullscreenElement?: Element | null;
 }
 
 /**
@@ -68,7 +80,7 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
   /**
    * Triggers the display of video controls and sets a timeout to hide them if the video is playing.
    */
-  const triggerShowControls = () => {
+  const triggerShowControls = useCallback(() => {
     if (!isMounted) return;
     setShowControls(true);
     if (hideTimeout) clearTimeout(hideTimeout);
@@ -76,7 +88,7 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
       const timeout = setTimeout(() => setShowControls(false), 2500);
       setHideTimeout(timeout);
     }
-  };
+  }, [isMounted, hideTimeout, isPlaying]);
 
   /**
    * Handles the play/pause functionality of the video.
@@ -191,24 +203,24 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
    */
   const handleFullscreen = () => {
     if (!isMounted) return;
-    const container = containerRef.current;
+    const container = containerRef.current as FullscreenElement | null;
     if (!container) return;
-    
+    const doc = document as FullscreenDocument;
     if (!isFullscreen) {
       if (container.requestFullscreen) {
         container.requestFullscreen().catch(console.error);
-      } else if ((container as any).webkitRequestFullscreen) {
-        (container as any).webkitRequestFullscreen();
-      } else if ((container as any).msRequestFullscreen) {
-        (container as any).msRequestFullscreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen().catch?.(console.error);
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen().catch?.(console.error);
       }
     } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch(console.error);
-      } else if ((document as any).webkitExitFullscreen) {
-        (document as any).webkitExitFullscreen();
-      } else if ((document as any).msExitFullscreen) {
-        (document as any).msExitFullscreen();
+      if (doc.exitFullscreen) {
+        doc.exitFullscreen().catch(console.error);
+      } else if (doc.webkitExitFullscreen) {
+        doc.webkitExitFullscreen().catch?.(console.error);
+      } else if (doc.msExitFullscreen) {
+        doc.msExitFullscreen().catch?.(console.error);
       }
     }
   };
@@ -227,9 +239,8 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
     }
     
     const handleFsChange = () => {
-      const fsElement = document.fullscreenElement || 
-        (document as any).webkitFullscreenElement || 
-        (document as any).msFullscreenElement;
+      const doc = document as FullscreenDocument;
+      const fsElement = doc.fullscreenElement || doc.webkitFullscreenElement || doc.msFullscreenElement;
       setIsFullscreen(!!fsElement);
     };
     
@@ -250,7 +261,6 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
    */
   useEffect(() => {
     if (!isMounted || !isPlaying) return;
-    
     const handleMove = () => triggerShowControls();
     const container = containerRef.current;
     if (container) {
@@ -263,7 +273,7 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
         container.removeEventListener("touchstart", handleMove);
       }
     };
-  }, [isPlaying, hideTimeout, isMounted]);
+  }, [isPlaying, hideTimeout, isMounted, triggerShowControls]);
 
   // Don't render interactive elements until mounted to prevent hydration mismatch
   if (!isMounted) {

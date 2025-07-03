@@ -3,7 +3,7 @@
  * @description This component provides a dialog for setting or deleting a custom URL slug for a document.
  * It allows users to create human-readable URLs for their documents and manages the interaction with the backend API.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

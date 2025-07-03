@@ -1,8 +1,22 @@
+/**
+ * @file useDocs.ts
+ * @description React hook for fetching and managing a list of DocsX documents, with filtering, sorting, and pagination.
+ * Handles state and API calls for document discovery and infinite scroll.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 import { useState, useEffect } from "react"
 import type { Doc, ApiResponse } from "@/components/types/doc-view"
 import { config } from "@/lib/config"
 import { getBookmarkedDocIds } from "@/lib/utils";
 
+/**
+ * useDocs hook provides state and handlers for fetching, filtering, and paginating DocsX documents.
+ *
+ * @param {object} [filterParams] - Optional filters (author, tags, date, sort).
+ * @returns {object} Document list state and handlers.
+ */
 export function useDocs(filterParams?: { author?: string; tags?: string[]; date?: string; sort?: string }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [docs, setDocs] = useState<Doc[]>([]);

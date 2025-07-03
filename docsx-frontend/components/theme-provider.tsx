@@ -3,7 +3,7 @@
  * @description This component provides theme-related context to the Next.js application.
  * It wraps the `next-themes` ThemeProvider to enable theme switching capabilities.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 'use client'

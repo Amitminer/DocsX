@@ -4,7 +4,7 @@
  * It displays a list of documentation and tutorials, provides search and filtering capabilities,
  * and integrates AI features like summarization. It also handles loading states, errors, and pagination.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

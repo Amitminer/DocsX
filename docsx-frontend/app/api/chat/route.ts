@@ -3,7 +3,7 @@
  * @description This module defines the API route for handling AI chat interactions.
  * It uses the Google Gemini model via the Vercel AI SDK to generate responses based on document content.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { google } from '@ai-sdk/google';

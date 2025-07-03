@@ -4,7 +4,7 @@
  * It fetches the document data, pre-fills the `DocForm`, and handles the update submission to the backend API.
  * It also manages loading states, errors, and user permissions.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

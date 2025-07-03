@@ -1,9 +1,24 @@
+/**
+ * @file useDocAssets.ts
+ * @description React hook for managing document assets (fetch, upload, delete) in DocsX.
+ * Handles asset state and API calls for document file management.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 import { useState, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import { config } from "@/lib/config";
 import { useAuth } from "@clerk/nextjs";
 import type { DocAsset } from "@/components/doc-view/asset-card";
 
+/**
+ * useDocAssets hook provides state and handlers for fetching, uploading, and deleting document assets.
+ *
+ * @param {string} [docId] - The document's unique identifier.
+ * @param {boolean} [isEditing] - Whether the document is in editing mode.
+ * @returns {object} Asset state and action handlers.
+ */
 export function useDocAssets(docId?: string, isEditing?: boolean) {
 	const [assets, setAssets] = useState<DocAsset[]>([]);
 	const [loadingAssets, setLoadingAssets] = useState(false);

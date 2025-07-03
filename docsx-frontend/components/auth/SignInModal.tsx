@@ -4,7 +4,7 @@
  * It allows users to sign in using either their username or email address, along with a password.
  * It handles loading states, displays error messages, and provides a toggle for password visibility.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

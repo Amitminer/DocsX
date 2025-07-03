@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - Docs API
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - Docs API
+//! Copyright 2025 AmitxD
 //!
 //! This module defines the API endpoints for managing documents.
 //! It handles everything from creating, reading, updating, and deleting documents

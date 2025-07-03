@@ -1,3 +1,11 @@
+/**
+ * @file action-dropdown.tsx
+ * @description Dropdown menu component for document actions (edit, delete, share, custom URL) in DocsX.
+ * Provides contextual actions for docs.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 import { useState, useEffect, useRef } from "react"
 import { createPortal } from "react-dom"
@@ -16,6 +24,12 @@ interface ActionDropdownProps {
 	customUrl?: string
 }
 
+/**
+ * ActionDropdown component renders a dropdown menu for document actions.
+ *
+ * @param {ActionDropdownProps} props - Props for the dropdown actions.
+ * @returns {JSX.Element} The rendered dropdown menu.
+ */
 export function ActionDropdown({ isAuthor, onEdit, onDelete, onDownload, onReport, onClose, position, customUrl }: ActionDropdownProps) {
 	const [isCopied, setIsCopied] = useState(false)
 	const [showDeleteModal, setShowDeleteModal] = useState(false)

@@ -4,7 +4,7 @@
  * It includes fields for title, description, content (with Markdown preview and AI enhancement),
  * and tags. It also supports asset uploads via drag-and-drop.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

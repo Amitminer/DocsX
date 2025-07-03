@@ -1,3 +1,11 @@
+/**
+ * @file header-bar.tsx
+ * @description Top navigation bar component for DocsX, showing logo, navigation, and user actions.
+ * Provides the main app header.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 import { Plus, User, FileText } from "lucide-react"
 import { useState, useEffect } from "react"
@@ -7,6 +15,11 @@ import { useUser } from "@clerk/nextjs"
 import { useAuth } from "./auth"
 import UserButton from "./auth/UserButton"
 
+/**
+ * HeaderBar component renders the top navigation bar for DocsX.
+ *
+ * @returns {JSX.Element} The rendered header bar.
+ */
 export default function HeaderBar() {
 	const [mounted, setMounted] = useState(false)
 	const { user, isLoaded } = useUser()

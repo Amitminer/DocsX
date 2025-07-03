@@ -1,7 +1,20 @@
+/**
+ * @file use-enhance-content.ts
+ * @description React hook for enhancing document content using AI (calls /api/enhance).
+ * Provides state and a function to trigger content enhancement for DocsX.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { useState } from "react"
 
+/**
+ * useEnhanceContent hook provides a function to enhance content via AI and loading state.
+ *
+ * @returns {object} { enhanceContent, isEnhancing }
+ */
 export function useEnhanceContent() {
 	const [isEnhancing, setIsEnhancing] = useState(false)
 

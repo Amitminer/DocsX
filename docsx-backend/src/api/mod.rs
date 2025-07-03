@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - API Module
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - API Module
+//! Copyright 2025 AmitxD
 //!
 //! This module serves as the entry point for all API-related modules.
 //! It consolidates the different API endpoints into a single, cohesive unit.

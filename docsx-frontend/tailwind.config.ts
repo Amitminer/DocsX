@@ -3,7 +3,7 @@
  * @description This file configures the Tailwind CSS framework for the DocsX frontend application.
  * It defines custom theme settings, including colors, fonts, border radii, and animations.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import type { Config } from "tailwindcss"

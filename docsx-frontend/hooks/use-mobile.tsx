@@ -3,7 +3,7 @@
  * @description This hook provides a way to detect if the current viewport width corresponds to a mobile device.
  * It is useful for conditionally rendering UI elements or applying mobile-specific logic.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import * as React from "react"

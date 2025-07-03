@@ -3,7 +3,7 @@
  * @description This module defines the API route for resolving custom document slugs.
  * It allows fetching a document's ID based on its custom slug.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { NextRequest, NextResponse } from "next/server";

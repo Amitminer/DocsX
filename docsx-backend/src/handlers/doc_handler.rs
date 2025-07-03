@@ -1,5 +1,5 @@
-//! AmitxD ProjectName(DocsX) - doc_handler
-//! Copyright 2024 AmitxD
+//! AmitxD DocsX - doc_handler
+//! Copyright 2025 AmitxD
 //!
 //! This module is the heart of the document management system.
 //! It contains all the business logic for creating, reading, updating, and deleting documents.

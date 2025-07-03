@@ -1,3 +1,11 @@
+/**
+ * @file doc-chat.tsx
+ * @description AI-powered chat assistant component for DocsX, providing writing and content suggestions for documents.
+ * Displays a chat UI for interacting with Google AI.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { useState, useRef, useEffect } from "react"
@@ -15,6 +23,12 @@ interface DocChatPropsWithInsert extends DocChatProps {
 	onInsert?: (text: string) => void;
 }
 
+/**
+ * DocChat component displays an AI chat assistant for document content help.
+ *
+ * @param {DocChatPropsWithInsert} props - Props for the chat assistant.
+ * @returns {JSX.Element} The rendered chat assistant UI.
+ */
 export function DocChat({ docTitle, docContent, onClose, onInsert }: DocChatPropsWithInsert) {
 	const [messages, setMessages] = useState<ChatMessage[]>([])
 	const [inputValue, setInputValue] = useState("")

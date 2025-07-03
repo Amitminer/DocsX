@@ -3,7 +3,7 @@
  * @description This component renders a collection of tags using `TagChip` components.
  * It provides a flexible way to display tags, with optional click and remove functionalities.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

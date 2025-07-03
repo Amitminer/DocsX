@@ -1,3 +1,11 @@
+/**
+ * @file use-toast.ts
+ * @description Custom React hook and toast utility for showing toast notifications in DocsX. Inspired by react-hot-toast.
+ * Provides toast state, dispatch, and helpers for global notifications.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 // Inspired by react-hot-toast library
@@ -169,6 +177,11 @@ function toast({ ...props }: Toast) {
 	}
 }
 
+/**
+ * useToast hook provides access to the toast state and helpers for showing/dismissing toasts.
+ *
+ * @returns {object} Toast state and toast/dismiss functions.
+ */
 function useToast() {
 	const [state, setState] = React.useState<State>(memoryState)
 

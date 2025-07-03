@@ -3,7 +3,7 @@
  * @description This component renders a code block with syntax highlighting, language labels, and a copy-to-clipboard button.
  * It is designed to be used within Markdown content rendering.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

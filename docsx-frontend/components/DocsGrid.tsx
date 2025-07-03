@@ -4,7 +4,7 @@
  * It handles infinite scrolling to load more documents as the user scrolls down.
  * It also integrates AI summarization functionality for each document card.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import DocCard from "./doc-card"

@@ -3,7 +3,7 @@
  * @description This component displays a user button that, when clicked, reveals a dropdown menu with options
  * to view user settings or sign out. It dynamically displays the user's profile picture or initials.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

@@ -4,7 +4,7 @@
  * It allows users to create a new account with their first name, last name, username, email, and password.
  * It also handles email verification and displays loading states and error messages.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 "use client"

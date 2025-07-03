@@ -1,3 +1,11 @@
+/**
+ * @file page.tsx
+ * @description Dynamic page for displaying a single DocsX document by slug or ID, including fetching, view tracking, and user actions.
+ * Handles document loading, error states, and engagement features.
+ * @author AmitxD
+ * @Copyright 2025
+ */
+
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
@@ -46,6 +54,11 @@ export async function getCustomSlugForId(docId: string): Promise<string | null> 
 	}
 }
 
+/**
+ * DocViewPage component renders the main view for a single DocsX document, handling fetch, display, and actions.
+ *
+ * @returns {JSX.Element} The rendered document view page.
+ */
 export default function DocViewPage() {
 	const params = useParams()
 	const router = useRouter()

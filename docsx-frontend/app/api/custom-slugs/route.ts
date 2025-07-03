@@ -3,7 +3,7 @@
  * @description This module defines the API routes for managing custom document slugs.
  * It acts as a proxy to the backend slug API, handling GET and POST requests for slug creation, retrieval, and deletion.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { NextRequest, NextResponse } from "next/server"

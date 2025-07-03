@@ -3,7 +3,7 @@
  * @description This module defines the API route for generating AI summaries of document content.
  * It uses the Google Gemini model via the Vercel AI SDK to create concise summaries.
  * @author AmitxD
- * @copyright 2024 AmitxD
+ * @Copyright 2025
  */
 
 import { google } from '@ai-sdk/google';
