@@ -130,6 +130,31 @@ DocsX/
 
 ---
 
+## 🧪 API Testing with Hurl
+
+You can test the backend API using [Hurl](https://hurl.dev/). Hurl test files are in the `tests/` directory and cover all major endpoints.
+
+### Setting Variables
+- All variables (`jwt`, `id`) are set in `tests/hurl.secrets` using the format:
+  ```env
+  jwt=your_jwt_token_here
+  id=your_doc_id_here
+  ```
+- Example values are provided in `tests/hurl/hurl.secrets`. Replace them with your real tokens and IDs before running tests.
+
+### Running Tests
+Run each test file with your variables loaded:
+```sh
+hurl --variables-file tests/hurl/hurl.secrets tests/hurl/health.hurl
+hurl --variables-file tests/hurl/hurl.secrets tests/hurl/docs.hurl
+```
+
+All test files use variables as `{{jwt}}`, `{{id}}`.
+
+See [Hurl documentation](https://hurl.dev/docs/cli.html#variables) for more advanced usage.
+
+---
+
 ## 📄 License
 This project is licensed under the [MIT License](LICENSE).
 

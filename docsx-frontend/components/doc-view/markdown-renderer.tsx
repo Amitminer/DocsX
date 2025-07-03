@@ -331,7 +331,6 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 					),
 					/** Custom renderer for `p` (paragraphs). */
 					p: ({ children }) => {
-						// Use the improved block detection function
 						const hasBlock = hasBlockElements(children);
 						const Wrapper = hasBlock ? 'div' : 'p';
 						return (
