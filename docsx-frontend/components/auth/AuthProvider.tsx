@@ -1,3 +1,4 @@
+"use client"
 /**
  * @file AuthProvider.tsx
  * @description This module provides an authentication context and provider for the application.

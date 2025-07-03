@@ -25,7 +25,7 @@ jobs:
       - name: Run Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
 
-  lint-frontend:
+    lint-frontend:
     name: 💅 Lint Frontend (ESLint)
     runs-on: ubuntu-latest
     defaults:
@@ -39,6 +39,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
         run: pnpm install
