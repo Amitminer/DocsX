@@ -1,11 +1,9 @@
 name: Lint Check
-
 on:
   push:
     branches: [stable, beta]
   pull_request:
     branches: [stable, beta]
-
 jobs:
   lint-backend:
     name: 🦀 Lint Rust (Clippy)
@@ -13,38 +11,29 @@ jobs:
     defaults:
       run:
         working-directory: docsx-backend
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
-
       - name: Run Clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
-
-    lint-frontend:
+  lint-frontend:
     name: 💅 Lint Frontend (ESLint)
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: docsx-frontend
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
       - name: Install pnpm
         run: npm install -g pnpm
-
       - name: Install dependencies
         run: pnpm install
-
       - name: Run ESLint
         run: pnpm run lint
