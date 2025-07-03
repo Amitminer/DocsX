@@ -46,6 +46,36 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 		return <Download className="inline w-4 h-4 mr-1 text-blue-400 align-text-bottom" />;
 	};
 
+	/**
+	 * Checks if children contain any block-level elements or components that render block elements
+	 */
+	const hasBlockElements = (children: React.ReactNode): boolean => {
+		return React.Children.toArray(children).some((child) => {
+			if (React.isValidElement(child)) {
+				// Check for HTML block elements
+				if (typeof child.type === 'string' && 
+					['div', 'video', 'table', 'ul', 'ol', 'pre', 'blockquote', 'hr', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(child.type)) {
+					return true;
+				}
+				// Check for custom components that might render block elements
+				if (typeof child.type === 'function' || typeof child.type === 'object') {
+					return true;
+				}
+				// Check for images that might be videos (which render as div)
+				if (
+					child.type === 'img' &&
+					typeof (child.props as { src?: unknown })?.src === 'string'
+				) {
+					const src = (child.props as { src: string }).src;
+					if (/\.(mp4|webm|ogg|mov|avi)$/i.test(src)) {
+						return true;
+					}
+				}
+			}
+			return false;
+		});
+	};
+
 	return (
 		<div className="prose prose-invert prose-purple max-w-none prose-lg">
 			<ReactMarkdown
@@ -266,7 +296,11 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 						const isVideo = /\.(mp4|webm|ogg|mov|avi)$/i.test(finalSrc);
 						// If the source is a video, render the CustomVideoPlayer component
 						if (isVideo) {
-							return <CustomVideoPlayer src={finalSrc} alt={alt} />;
+							return (
+								<div className="w-full h-full my-6">
+									<CustomVideoPlayer src={finalSrc} alt={alt} />
+								</div>
+							);
 						}
 						return (
 							/* eslint-disable @next/next/no-img-element */
@@ -297,13 +331,8 @@ export function MarkdownRenderer({ content, docId }: MarkdownRendererProps) {
 					),
 					/** Custom renderer for `p` (paragraphs). */
 					p: ({ children }) => {
-						// If any child is a block element, use div instead of p to avoid invalid HTML nesting
-						const hasBlock = React.Children.toArray(children).some(
-							(child) =>
-								React.isValidElement(child) &&
-								typeof child.type === 'string' &&
-								['div', 'video', 'table', 'ul', 'ol', 'pre'].includes(child.type)
-						);
+						// Use the improved block detection function
+						const hasBlock = hasBlockElements(children);
 						const Wrapper = hasBlock ? 'div' : 'p';
 						return (
 							<Wrapper className="text-gray-300 leading-relaxed mb-4 sm:mb-6 text-base sm:text-lg">

@@ -69,6 +69,8 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
   const [showVolumeSlider, setShowVolumeSlider] = useState(false);
   /** @type {React.RefObject<NodeJS.Timeout | null>} Ref for the volume slider hide timeout. */
   const volumeSliderTimeout = useRef<NodeJS.Timeout | null>(null);
+  /** @type {[string | null, React.Dispatch<React.SetStateAction<string | null>>]} State to track video error messages. */
+  const [videoError, setVideoError] = useState<string | null>(null);
 
   /**
    * Effect to set `isMounted` to true after the component mounts, addressing hydration issues.
@@ -318,7 +320,15 @@ const CustomVideoPlayer: React.FC<CustomVideoPlayerProps> = ({ src, alt }) => {
           aria-label={alt || "Video"}
           onClick={handlePlayPause}
           style={{ cursor: "pointer", width: '100%', height: '100%' }}
+          onError={() => setVideoError("Video could not be loaded. Please check the file path and format.")}
         />
+        
+        {videoError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 z-30 rounded-lg">
+            <span className="text-red-400 text-lg font-bold mb-2">{videoError}</span>
+            <span className="text-gray-300 text-sm">Tried: {src}</span>
+          </div>
+        )}
         
         {/* Center Play/Pause Button */}
         {(!isPlaying || showControls) && (
