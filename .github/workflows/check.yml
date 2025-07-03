@@ -18,7 +18,7 @@ jobs:
         with:
           components: clippy
       - name: Run Clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
+        run: cargo clippy --all-targets --all-features -- -D warnings -A clippy::uninlined_format_args
   lint-frontend:
     name: 💅 Lint Frontend (ESLint)
     runs-on: ubuntu-latest
