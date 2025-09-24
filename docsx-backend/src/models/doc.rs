@@ -154,14 +154,3 @@ pub struct DocsResponse {
     /// The total number of pages.
     pub total_pages: u32,
 }
-
-/// Represents a custom URL slug for a document.
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct DocSlug {
-    /// The unique identifier of the document.
-    pub doc_id: Uuid,
-    /// The custom slug.
-    pub slug: String,
-    /// The timestamp when the slug was created.
-    pub created_at: DateTime<Utc>,
-}

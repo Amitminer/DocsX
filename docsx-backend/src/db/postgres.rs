@@ -9,10 +9,25 @@ use crate::utils::error::AppError;
 use deadpool_postgres::{Config, Pool, Runtime};
 use std::time::Duration;
 use tokio::time::sleep;
-use tokio_postgres::NoTls;
+use tokio_postgres_rustls::MakeRustlsConnect;
+use rustls::{ClientConfig, RootCertStore};
 
 /// A type alias for the database connection pool.
 pub type DbPool = Pool;
+
+/// Creates a TLS connector for secure database connections.
+fn create_tls_connector() -> Result<MakeRustlsConnect, AppError> {
+    let mut root_store = RootCertStore::empty();
+    root_store.extend(
+        webpki_roots::TLS_SERVER_ROOTS.iter().cloned()
+    );
+
+    let config = ClientConfig::builder()
+        .with_root_certificates(root_store)
+        .with_no_client_auth();
+
+    Ok(MakeRustlsConnect::new(config))
+}
 
 /// Creates a new database connection pool.
 ///
@@ -38,14 +53,24 @@ pub async fn create_pool(database_url: &str) -> Result<DbPool, AppError> {
     cfg.password = url.password().map(|p| p.to_string());
     cfg.dbname = Some(url.path().trim_start_matches('/').to_string());
 
-    let pool = cfg.create_pool(Some(Runtime::Tokio1), NoTls).map_err(|e| {
-        log::error!("Failed to create pool: {}", e);
-        AppError::Internal
-    })?;
+    // Check if SSL is required from the URL parameters
+    let requires_ssl = url.query_pairs()
+        .any(|(key, value)| key == "sslmode" && (value == "require" || value == "prefer"));
 
-    // Test the connection
-    let client = pool.get().await?;
-    client.execute("SELECT 1", &[]).await?;
+    let pool = if requires_ssl {
+        let tls = create_tls_connector()?;
+        cfg.create_pool(Some(Runtime::Tokio1), tls).map_err(|e| {
+            log::error!("Failed to create pool with TLS: {}", e);
+            AppError::Internal
+        })?
+    } else {
+        // Fallback to NoTls for local development
+        use tokio_postgres::NoTls;
+        cfg.create_pool(Some(Runtime::Tokio1), NoTls).map_err(|e| {
+            log::error!("Failed to create pool: {}", e);
+            AppError::Internal
+        })?
+    };
     log::info!("Database connection established successfully");
 
     Ok(pool)
