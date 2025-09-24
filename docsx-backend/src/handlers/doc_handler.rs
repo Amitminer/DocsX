@@ -578,52 +578,43 @@ fn parse_smart_search(search: &str) -> (Vec<SmartFilter>, String) {
     if let Some(cap) = regex::Regex::new(r"by_author:(\S+)")
         .unwrap()
         .captures(search)
-    {
-        if let Some(author) = cap.get(1) {
+        && let Some(author) = cap.get(1) {
             filters.push(SmartFilter::Author(author.as_str().to_string()));
             remaining_text = remaining_text.replace(&cap[0], "").trim().to_string();
         }
-    }
 
     // NEW: Extract by_author_name: filter
     if let Some(cap) = regex::Regex::new(r"by_author_name:(\S+)")
         .unwrap()
         .captures(search)
-    {
-        if let Some(author_name) = cap.get(1) {
+        && let Some(author_name) = cap.get(1) {
             filters.push(SmartFilter::AuthorName(author_name.as_str().to_string()));
             remaining_text = remaining_text.replace(&cap[0], "").trim().to_string();
         }
-    }
 
     // Extract uploaded_date: filter (supports date ranges)
     if let Some(cap) = regex::Regex::new(r"uploaded_date:(\S+)")
         .unwrap()
         .captures(search)
-    {
-        if let Some(date_range) = cap.get(1) {
-            if let Some((start, end)) = parse_date_range(date_range.as_str()) {
-                filters.push(SmartFilter::DateRange(start, end));
-                remaining_text = remaining_text.replace(&cap[0], "").trim().to_string();
-            }
+        && let Some(date_range) = cap.get(1)
+        && let Some((start, end)) = parse_date_range(date_range.as_str()) {
+            filters.push(SmartFilter::DateRange(start, end));
+            remaining_text = remaining_text.replace(&cap[0], "").trim().to_string();
         }
-    }
 
     // Extract tag: filter
-    if let Some(cap) = regex::Regex::new(r"tag:(\S+)").unwrap().captures(search) {
-        if let Some(tag) = cap.get(1) {
+    if let Some(cap) = regex::Regex::new(r"tag:(\S+)").unwrap().captures(search)
+        && let Some(tag) = cap.get(1) {
             filters.push(SmartFilter::Tag(tag.as_str().to_string()));
             remaining_text = remaining_text.replace(&cap[0], "").trim().to_string();
         }
-    }
 
     // Extract sort: filter
-    if let Some(cap) = regex::Regex::new(r"sort:(\S+)").unwrap().captures(search) {
-        if let Some(sort) = cap.get(1) {
+    if let Some(cap) = regex::Regex::new(r"sort:(\S+)").unwrap().captures(search)
+        && let Some(sort) = cap.get(1) {
             filters.push(SmartFilter::Sort(sort.as_str().to_string()));
             remaining_text = remaining_text.replace(&cap[0], "").trim().to_string();
         }
-    }
 
     (filters, remaining_text)
 }
